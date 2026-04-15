@@ -27,6 +27,7 @@ app.use(express.json());
 
 app.use("/", require("./routes/root"));
 
+app.use("/register", require("./routes/register"));
 app.use("/products", require("./routes/product"));
 
 app.all(/.*/, (req, res) => {

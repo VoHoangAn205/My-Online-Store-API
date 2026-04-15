@@ -9,15 +9,15 @@ const getAllProductsContrl = async (req, res) => {
 };
 
 const createProductContrl = async (req, res) => {
-  const { productName, category, price } = req?.body;
-  if (!productName || !category || !price) {
+  const { name, category, price } = req?.body;
+  if (!name || !category || !price) {
     return res.status(400).json({ message: "your fields are required" });
   }
   console.log(req.body);
 
   try {
     const result = await Product.create({
-      productName,
+      name,
       category,
       price,
     });

@@ -1,11 +1,12 @@
-const { Schema } = require("mongoose");
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  userName: {
+  username: {
     type: String,
     require: true,
   },
-  pwd: {
+  password: {
     type: String,
     require: true,
   },
@@ -17,9 +18,11 @@ const userSchema = new Schema({
     Admin: Number,
     Salesman: Number,
   },
-  createTime: {
+  createAt: {
     type: Date,
     default: Date.now,
   },
   refreshToken: String,
 });
+
+module.exports = mongoose.model("User", userSchema);
