@@ -9,6 +9,7 @@ const corsOptions = require("./config/corsOptions");
 const port = process.env.PORT || 3500;
 const connectDB = require("./config/dbConn");
 const { default: mongoose } = require("mongoose");
+const verifyJWT = require("./middleware/verifyJWT");
 
 // connect to MongoDB
 connectDB();
@@ -28,6 +29,8 @@ app.use(express.json());
 app.use("/", require("./routes/root"));
 
 app.use("/register", require("./routes/register"));
+app.use("/auth", require("./routes/auth"));
+app.use(verifyJWT);
 app.use("/products", require("./routes/product"));
 
 app.all(/.*/, (req, res) => {
