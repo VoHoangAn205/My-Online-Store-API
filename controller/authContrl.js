@@ -2,7 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const authContrl = async (req, res) => {
+const handleLogin = async (req, res) => {
   const { username, password } = req.body;
 
   if (!username && !password) {
@@ -44,9 +44,8 @@ const authContrl = async (req, res) => {
     const result = await User.findByIdAndUpdate(
       foundUser._id,
       { refreshToken },
-      { new: true },
-    );
-    console.log(result);
+      { returnDocument: "after" },
+    ).exec();
 
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
@@ -61,4 +60,4 @@ const authContrl = async (req, res) => {
   }
 };
 
-module.exports = authContrl;
+module.exports = { handleLogin };

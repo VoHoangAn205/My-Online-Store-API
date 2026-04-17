@@ -31,7 +31,7 @@ app.use("/", require("./routes/root"));
 app.use("/register", require("./routes/register"));
 app.use("/auth", require("./routes/auth"));
 app.use(verifyJWT);
-app.use("/products", require("./routes/product"));
+app.use("/products", require("./routes/api/product"));
 
 app.all(/.*/, (req, res) => {
   res.status(404);

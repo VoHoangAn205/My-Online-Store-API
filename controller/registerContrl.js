@@ -2,7 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
-const registerContrl = async (req, res) => {
+const handleRegister = async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -32,4 +32,4 @@ const registerContrl = async (req, res) => {
   }
 };
 
-module.exports = registerContrl;
+module.exports = { handleRegister };
