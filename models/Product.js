@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const productSchema = new Schema({
   name: { type: String, required: true },
+  imageUrl: { type: String },
   category: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -10,7 +11,7 @@ const productSchema = new Schema({
       required: true,
     },
   ],
-  createdBy: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     require: true,
