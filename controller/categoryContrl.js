@@ -6,6 +6,7 @@ const getAllCategory = async (req, res) => {
 
 const createCategory = async (req, res) => {
   const { name } = req.body;
+  console.log(req);
   if (!name) {
     return res
       .status(400)
