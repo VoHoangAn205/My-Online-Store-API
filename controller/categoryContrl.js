@@ -18,11 +18,17 @@ const createCategory = async (req, res) => {
 
   const duplicate = await Category.findOne({ name: { $eq: name } }).exec();
 
-  if (duplicate)
+  if (duplicate) {
     return res.status(409).json({ message: "this category are existed" });
+  }
 
-  const result = await Category.create({ name, user: userId });
-  return res.status(201).json({ message: "your category created", result });
+  try {
+    const result = await Category.create({ name, user: userId });
+    return res.status(201).json({ message: "your category created", result });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "cannot create category" });
+  }
 };
 
 const deleteCategory = async (req, res) => {
@@ -33,12 +39,11 @@ const deleteCategory = async (req, res) => {
   const foundCategory = await Category.findById(id);
 
   if (!foundCategory) {
-    return res.status(403).json({ message: "cannot found category" });
+    return res.status(404).json({ message: "cannot found category" });
   }
 
   const result = await Category.deleteOne({ _id: id });
-
-  return res.status(200).json({ message: result });
+  return res.sendStatus(200);
 };
 
 module.exports = {

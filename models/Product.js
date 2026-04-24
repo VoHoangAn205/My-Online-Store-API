@@ -14,10 +14,11 @@ const productSchema = new Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    require: true,
+    required: true,
   },
   price: { type: Number, required: true },
-  stock: { type: Number, require: true },
+  stock: { type: Number, required: true },
+  description: { type: String },
   date: { type: Date, default: Date.now },
 });
 

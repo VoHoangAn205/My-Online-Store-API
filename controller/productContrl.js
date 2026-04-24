@@ -9,8 +9,10 @@ const getAllProductsContrl = async (req, res) => {
 };
 
 const createProductContrl = async (req, res) => {
-  const { name, category, price } = req?.body;
-  if (!name || !category || !price) {
+  const { name, category, price, stock } = req?.body;
+  const userId = req.userId;
+
+  if (!name || !category || !price || !stock) {
     return res.status(400).json({ message: "your fields are required" });
   }
   console.log(req.body);
@@ -20,6 +22,8 @@ const createProductContrl = async (req, res) => {
       name,
       category,
       price,
+      stock,
+      user: userId,
     });
     res.status(201).json(result);
   } catch (err) {
