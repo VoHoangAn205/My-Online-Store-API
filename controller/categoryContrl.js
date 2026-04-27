@@ -10,12 +10,6 @@ const createCategory = async (req, res) => {
   const { name } = req.body;
   const userId = req.userId;
 
-  if (!name) {
-    return res
-      .status(400)
-      .json({ message: "your caregory's name is required" });
-  }
-
   const duplicate = await Category.findOne({ name: { $eq: name } }).exec();
 
   if (duplicate) {
@@ -33,8 +27,6 @@ const createCategory = async (req, res) => {
 
 const deleteCategory = async (req, res) => {
   const { id } = req.body;
-
-  if (!id) return res.status(400).json({ message: "your ID is required" });
 
   const foundCategory = await Category.findById(id);
 
