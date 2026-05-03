@@ -13,8 +13,6 @@ const storage = new CloudinaryStorage({
     folder: "uploads",
     format: async (req, file) => "webp",
     public_id: (req, file) => {
-      console.log(req);
-
       const fileName = file.originalname.split(".")[0];
       return `${fileName}-${Date.now()}`;
     },

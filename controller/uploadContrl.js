@@ -1,6 +1,4 @@
 const uploadImage = async (req, res) => {
-  console.log("into upload controller");
-
   const file = req?.file;
   try {
     if (!file) {
