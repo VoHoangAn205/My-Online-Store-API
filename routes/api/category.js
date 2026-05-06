@@ -2,17 +2,17 @@ const express = require("express");
 const router = express.Router();
 const categoryContrl = require("../../controller/categoryContrl");
 const validateBody = require("../../middleware/validateBody");
-const categoryJoiSchema = require("../../validations/categoryValidate");
+const categoryValidate = require("../../validations/categoryValidate");
 
 router
   .route("/")
   .get(categoryContrl.getAllCategory)
   .post(
-    validateBody(categoryJoiSchema.createCategoryForm),
+    validateBody(categoryValidate.createCategory),
     categoryContrl.createCategory,
   )
   .delete(
-    validateBody(categoryJoiSchema.deleteCategoryForm),
+    validateBody(categoryValidate.deleteCategory),
     categoryContrl.deleteCategory,
   );
 
