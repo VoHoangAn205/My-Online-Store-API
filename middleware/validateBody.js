@@ -1,13 +1,19 @@
-const { validate } = require("express-joi-validations");
-
 const validateBody = (schema) => {
   return (req, res, next) => {
-    const { error } = schema.validate(req.body);
+    const { error, value } = schema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
 
     if (error) {
-      console.error(error);
-      res.status(400).json({ message: error.details[0].message });
+      console.error("Validation Error: ", error.message);
+      //map all errors to give full reports
+      const errorMessages = error.details.map((detail) => detail.message);
+
+      res.status(400).json({ message: errorMessages });
     }
+    // replace with the cleaned value!!!
+    req.body = value;
     next();
   };
 };

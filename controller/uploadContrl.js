@@ -9,10 +9,9 @@ const uploadImage = async (req, res) => {
       public_id: filename,
     });
 
-    res.status(200).json({
+    res.status(201).json({
       message: "Image uploaded successfully",
-      url: path,
-      public_id: filename,
+      result,
     });
   } catch (err) {
     res.status(500).json({ message: "upload failed", error: err.message });
