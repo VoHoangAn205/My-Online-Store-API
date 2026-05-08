@@ -13,3 +13,9 @@ const imageSchema = new Schema({
 });
 
 module.exports = mongoose.model("Image", imageSchema);
+
+const gallerySchema = new Schema({
+  images: [{ imageSchema }],
+});
+
+module.export = mongoose.model("Gallery", gallerySchema);

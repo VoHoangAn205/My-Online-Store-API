@@ -7,4 +7,17 @@ const uploadImage = Joi.object({
   public_id: Joi.string().required(),
 });
 
-module.exports = { uploadImage };
+const uploadGallery = Joi.array().items(
+  Joi.object({
+    url: Joi.string().required(),
+    public_id: Joi.string().required(),
+  })
+    .min(1)
+    .max(5)
+    .messages({
+      "array.base": "your image's file is invalid",
+      "any.required": "Images are required",
+    }),
+);
+
+module.exports = { uploadImage, uploadGallery };
