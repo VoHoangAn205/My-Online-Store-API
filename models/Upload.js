@@ -12,10 +12,11 @@ const imageSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("Image", imageSchema);
-
 const gallerySchema = new Schema({
-  images: [{ imageSchema }],
+  images: [imageSchema],
 });
 
-module.export = mongoose.model("Gallery", gallerySchema);
+const Image = mongoose.model("Image", imageSchema);
+const Gallery = mongoose.model("Gallery", gallerySchema);
+
+module.exports = { Image, Gallery };

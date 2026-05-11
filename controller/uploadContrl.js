@@ -1,8 +1,13 @@
-const Image = require("../models/Image");
+const { Image, Gallery } = require("../models/Upload");
 
 const uploadImage = async (req, res) => {
   try {
     const { path, filename } = req.file;
+    if (!path || !filename) {
+      return res
+        .status(400)
+        .json({ message: "your image's file is required or invalid" });
+    }
 
     const result = await Image.create({
       url: path,
@@ -11,7 +16,7 @@ const uploadImage = async (req, res) => {
 
     res.status(201).json({
       message: "Image uploaded successfully",
-      result,
+      data: result,
     });
   } catch (err) {
     res.status(500).json({ message: "upload failed", error: err.message });
@@ -29,12 +34,12 @@ const uploadGallery = async (req, res) => {
       url: file.path,
       public_id: file.filename,
     }));
-    console.log("controller's log: ", images);
 
-    // const results = Image.create(images)
+    const results = await Gallery.create({ images });
+
     res
       .status(200)
-      .json({ message: "Images uploaded successfully", data: images });
+      .json({ message: "gallery uploaded successfully", data: results.images });
   } catch (err) {
     res.status(500).json({ message: "upload failed", error: err.message });
   }
