@@ -4,12 +4,16 @@ const Schema = mongoose.Schema;
 const productSchema = new Schema(
   {
     name: { type: String, required: true },
-    imageUrl: { type: String },
+    Gallery: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Gallery",
+      },
+    ],
     category: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
-        required: true,
       },
     ],
     user: {
@@ -19,8 +23,7 @@ const productSchema = new Schema(
     },
     price: { type: Number, required: true },
     stock: { type: Number, required: true },
-    description: { type: String },
-    date: { type: Date, default: Date.now },
+    description: { type: String, required: true },
   },
   { timestamps: true },
 );

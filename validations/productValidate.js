@@ -1,8 +1,12 @@
 const { Joi } = require("express-joi-validations");
 
-const createProductForm = Joi.object({
+const createProduct = Joi.object({
   name: Joi.string().required(),
-  category: Joi.array().required(),
+  category: Joi.array().items(Joi.string()).min(1).required(),
+  gallery: Joi.array().items(Joi.string()).min(1).required(),
+  description: Joi.string().required(),
   price: Joi.number().required(),
   stock: Joi.number().required(),
 });
+
+module.exports = { createProduct };
