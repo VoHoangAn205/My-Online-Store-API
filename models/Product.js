@@ -4,16 +4,16 @@ const Schema = mongoose.Schema;
 const productSchema = new Schema(
   {
     name: { type: String, required: true },
-    Gallery: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Gallery",
-      },
-    ],
+    gallery: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Gallery",
+      required: true,
+    },
     category: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
+        required: true,
       },
     ],
     user: {
