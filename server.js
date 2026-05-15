@@ -38,10 +38,10 @@ app.use("/register", require("./routes/register"));
 app.use("/auth", require("./routes/auth"));
 app.use("/refresh", require("./routes/refresh"));
 app.use("/logout", require("./routes/logout"));
-app.use(verifyJWT);
-app.use("/upload", require("./routes/api/upload"));
 app.use("/category", require("./routes/api/category"));
 app.use("/products", require("./routes/api/product"));
+app.use(verifyJWT);
+app.use("/upload", require("./routes/api/upload"));
 
 app.all(/.*/, (req, res) => {
   res.status(404);
