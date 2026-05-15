@@ -1,11 +1,39 @@
 const Product = require("../models/Product");
 
 const getAllProductsContrl = async (req, res) => {
-  const results = await Product.find();
-  if (!results) {
-    return res.status(204).json({ message: "No products found" });
+  try {
+    const results = await Product.find()
+      .populate("category", "name")
+      .populate("gallery")
+      .populate("user", "username")
+      .exec();
+
+    res.status(200).json(results);
+  } catch (err) {
+    console.error("Error fetching products: ", err.message);
+    res
+      .status(500)
+      .json({ message: "Server Error fetching product", error: err });
   }
-  res.json(results);
+};
+
+const getOneProductContrl = async (req, res) => {
+  try {
+    const result = await Product.findById(req.params.id)
+      .populate("category", "name")
+      .populate("gallery")
+      .populate("user", "username")
+      .exec();
+
+    if (!result) return res.status(404).json({ message: "Product not found" });
+
+    res.status(200).json(result);
+  } catch (err) {
+    console.error("Error fetching product: ", err.message);
+    res
+      .status(500)
+      .json({ message: "Server Error fetching product", error: err });
+  }
 };
 
 const createProductContrl = async (req, res) => {
@@ -18,11 +46,12 @@ const createProductContrl = async (req, res) => {
     res.status(201).json(result);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "cannot create product", error: err });
+    res.status(500).json({ message: "Cannot create product", error: err });
   }
 };
 
 module.exports = {
   getAllProductsContrl,
+  getOneProductContrl,
   createProductContrl,
 };
