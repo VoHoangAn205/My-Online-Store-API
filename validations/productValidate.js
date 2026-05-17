@@ -5,8 +5,13 @@ const createProduct = Joi.object({
   category: Joi.array().items(Joi.string()).min(1).required(),
   gallery: Joi.string().required(),
   description: Joi.string().required(),
-  price: Joi.number().required(),
-  stock: Joi.number().required(),
+  price: Joi.number().min(1).required(),
+  stock: Joi.number().integer().min(0).required(),
 });
 
-module.exports = { createProduct };
+const updateProduct = createProduct.fork(
+  ["name", "price", "stock", "description", "category", "gallery"],
+  (schema) => schema.optional(),
+);
+
+module.exports = { createProduct, updateProduct };

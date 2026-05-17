@@ -17,7 +17,7 @@ const getAllProductsContrl = async (req, res) => {
   }
 };
 
-const getOneProductContrl = async (req, res) => {
+const getProductById = async (req, res) => {
   try {
     const result = await Product.findById(req.params.id)
       .populate("category", "name")
@@ -50,8 +50,23 @@ const createProductContrl = async (req, res) => {
   }
 };
 
+const updateProductContrl = async (req, res) => {
+  const id = req.params.id;
+  const body = req.body;
+
+  try {
+    const result = Product.findByIdAndUpdate(id, body, {
+      new: true,
+      runValidators: true,
+    }).exec();
+  } catch (err) {
+    console.error("cannot update product: ", err.message);
+  }
+};
+
 module.exports = {
   getAllProductsContrl,
-  getOneProductContrl,
+  getProductById,
   createProductContrl,
+  updateProductContrl,
 };

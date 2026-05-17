@@ -17,6 +17,14 @@ router
     productContrl.createProductContrl,
   );
 
-router.route("/detail/:id").get(productContrl.getOneProductContrl);
+router
+  .route("/:id")
+  .get(productContrl.getProductById)
+  .put(
+    verifyJWT,
+    verifyRole(ROLES_LIST.Salesman),
+    validateBody(productValidate.updateProduct),
+    productContrl.updateProductContrl,
+  );
 
 module.exports = router;
