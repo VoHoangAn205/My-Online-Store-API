@@ -55,10 +55,16 @@ const updateProductContrl = async (req, res) => {
   const body = req.body;
 
   try {
-    const result = Product.findByIdAndUpdate(id, body, {
+    const foundProduct = await Product.findById(id).exec();
+
+    if (!foundProduct)
+      return res.status(404).json({ message: "this product is not exist" });
+
+    const result = await Product.findByIdAndUpdate(id, body, {
       new: true,
       runValidators: true,
     }).exec();
+    res.status(200).json({ message: "update successful", data: result });
   } catch (err) {
     console.error("cannot update product: ", err.message);
   }
