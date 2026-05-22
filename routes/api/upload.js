@@ -6,7 +6,9 @@ const storage = require("../../config/cloudinaryConfig");
 
 const upload = multer({ storage: storage });
 
-router.post("/image", upload.single("image"), uploadContrl.uploadImage);
-router.post("/gallery", upload.array("images", 5), uploadContrl.uploadGallery);
+router
+  .route("/image/:id")
+  .post(upload.single("image"), uploadContrl.uploadImage)
+  .delete(uploadContrl.deleteImage);
 
 module.exports = router;

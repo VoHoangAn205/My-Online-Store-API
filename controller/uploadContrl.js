@@ -1,4 +1,5 @@
-const { Image, Gallery } = require("../models/Upload");
+const cloudinary = require("cloudinary").v2;
+const { Image } = require("../models/Upload");
 
 const uploadImage = async (req, res) => {
   try {
@@ -6,7 +7,7 @@ const uploadImage = async (req, res) => {
     if (!path || !filename) {
       return res
         .status(400)
-        .json({ message: "your image's file is required or invalid" });
+        .json({ message: "Your image's file is required or invalid" });
     }
 
     const result = await Image.create({
@@ -15,33 +16,38 @@ const uploadImage = async (req, res) => {
     });
 
     res.status(201).json({
-      message: "Image uploaded successfully",
+      message: "image uploaded successfully",
       data: result,
     });
   } catch (err) {
-    res.status(500).json({ message: "upload failed", error: err.message });
+    res.status(500).json({ message: "Upload failed", error: err.message });
   }
 };
 
-const uploadGallery = async (req, res) => {
+const deleteImage = async (req, res) => {
   try {
-    const files = req.files;
-    if (!files || files.length === 0) {
-      return res.status(400).json({ message: "No files uploaded" });
+    const id = req.params.id;
+
+    if (!id) {
+      return res.status(400).json({ message: "id is required" });
+    }
+    const foundImage = await Image.findById(id).exec();
+
+    if (!foundImage) {
+      return res.status(400).json({ message: "This image is not exist" });
     }
 
-    const images = files.map((file) => ({
-      url: file.path,
-      public_id: file.filename,
-    }));
+    await cloudinary.uploader.destroy(foundImage.public_id);
+    const result = await Image.findByIdAndDelete(id);
 
-    const results = await Gallery.create({ images });
-
-    res
-      .status(200)
-      .json({ message: "gallery uploaded successfully", data: results });
+    res.status(200).json({ message: "Delete Image susseccful", data: result });
   } catch (err) {
-    res.status(500).json({ message: "upload failed", error: err.message });
+    console.error(err);
+    res.status(500).json({ message: "Delete failed", error: err.message });
   }
 };
-module.exports = { uploadImage, uploadGallery };
+
+module.exports = {
+  uploadImage,
+  deleteImage,
+};

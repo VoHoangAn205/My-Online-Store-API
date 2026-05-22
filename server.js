@@ -42,6 +42,7 @@ app.use("/category", require("./routes/api/category"));
 app.use("/product", require("./routes/api/product"));
 app.use(verifyJWT);
 app.use("/upload", require("./routes/api/upload"));
+app.use("/gallery", require("./routes/api/gallery"));
 
 app.all(/.*/, (req, res) => {
   res.status(404);
