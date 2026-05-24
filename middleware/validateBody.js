@@ -11,10 +11,11 @@ const validateBody = (schema) => {
       const errorMessages = error.details.map((detail) => detail.message);
 
       res.status(400).json({ message: errorMessages });
+    } else {
+      // replace with the cleaned value!!!
+      req.body = value;
+      next();
     }
-    // replace with the cleaned value!!!
-    req.body = value;
-    next();
   };
 };
 

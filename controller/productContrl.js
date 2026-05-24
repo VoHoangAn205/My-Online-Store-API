@@ -29,7 +29,7 @@ const getProductById = async (req, res) => {
 
     res.status(200).json(result);
   } catch (err) {
-    console.error("Error fetching product: ", err.message);
+    console.error(err);
     res
       .status(500)
       .json({ message: "Server Error fetching product", error: err });
@@ -51,22 +51,45 @@ const createProductContrl = async (req, res) => {
 };
 
 const updateProductContrl = async (req, res) => {
-  const id = req.params.id;
-  const body = req.body;
-
   try {
+    const id = req.params.id;
+    const body = req.body;
+
     const foundProduct = await Product.findById(id).exec();
 
     if (!foundProduct)
-      return res.status(404).json({ message: "this product is not exist" });
+      return res.status(404).json({ message: "This product is not exist" });
 
     const result = await Product.findByIdAndUpdate(id, body, {
-      new: true,
+      returnDocument: "after",
       runValidators: true,
     }).exec();
-    res.status(200).json({ message: "update successful", data: result });
+
+    res.status(200).json({ message: "Update successful", data: result });
   } catch (err) {
-    console.error("cannot update product: ", err.message);
+    console.error("Cannot update product: ", err.message);
+    res.status(500).json({ message: "Cannot update product", error: err });
+  }
+};
+
+const deleteProductContrl = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const foundProduct = await Product.findById(id).exec();
+
+    if (!foundProduct) {
+      return res.status(404).json({ message: "this product is not exist" });
+    }
+
+    const result = await Product.deleteOne(foundProduct).exec();
+
+    res.status(200).json({ message: "product deleted successful" });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ message: "Cannot delete product", error: err.message });
   }
 };
 
@@ -75,4 +98,5 @@ module.exports = {
   getProductById,
   createProductContrl,
   updateProductContrl,
+  deleteProductContrl,
 };

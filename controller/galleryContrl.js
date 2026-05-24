@@ -48,7 +48,7 @@ const addImageToGallery = async (req, res) => {
       id,
       { $addToSet: { images: { url: path, public_id: filename } } },
       { returnDocument: "after" },
-    );
+    ).exec();
 
     res.status(200).json({ message: "image added successful", result });
   } catch (err) {
@@ -90,7 +90,7 @@ const removeImageFromGallery = async (req, res) => {
       id,
       { $pull: { images: { _id: imageId } } },
       { returnDocument: "after" },
-    );
+    ).exec();
 
     res.status(200).json({ message: "image removed successful", result });
   } catch (err) {
@@ -109,15 +109,15 @@ const deleteGallery = async (req, res) => {
     const foundGallery = await Gallery.findById(id).exec();
 
     if (!foundGallery) {
-      return res.status(400).json({ message: "This image is not exist" });
+      return res.status(404).json({ message: "This image is not exist" });
     }
 
     const dataMapping = foundGallery.images.map((image) => {
       return image.public_id;
     });
 
-    const result1 = await cloudinary.api.delete_resources(dataMapping);
-    const result2 = await Gallery.findByIdAndDelete(id);
+    await cloudinary.api.delete_resources(dataMapping);
+    const result2 = await Gallery.findByIdAndDelete(id).exec();
 
     res
       .status(200)

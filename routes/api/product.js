@@ -25,6 +25,11 @@ router
     verifyRole(ROLES_LIST.Salesman),
     validateBody(productValidate.updateProduct),
     productContrl.updateProductContrl,
+  )
+  .delete(
+    verifyJWT,
+    verifyRole(ROLES_LIST.Salesman, ROLES_LIST.Admin),
+    productContrl.deleteProductContrl,
   );
 
 module.exports = router;
