@@ -41,6 +41,7 @@ app.use("/logout", require("./routes/logout"));
 app.use("/category", require("./routes/api/category"));
 app.use("/product", require("./routes/api/product"));
 app.use(verifyJWT);
+app.use("/order", require("./routes/api/order"));
 app.use("/upload", require("./routes/api/upload"));
 app.use("/gallery", require("./routes/api/gallery"));
 
