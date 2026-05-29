@@ -32,4 +32,6 @@ router
     productContrl.deleteProductContrl,
   );
 
+router.get("/shop/:shopId", productContrl.getShopProducts);
+
 module.exports = router;

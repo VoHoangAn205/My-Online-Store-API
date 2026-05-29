@@ -2,13 +2,26 @@ const Product = require("../models/Product");
 
 const getAllProductsContrl = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+
     const results = await Product.find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 })
       .populate("category", "name")
       .populate("gallery")
       .populate("user", "username")
       .exec();
+    const totalProducts = await Product.countDocuments();
 
-    res.status(200).json(results);
+    res.status(200).json({
+      count: results.length,
+      totalPage: Math.ceil(totalProducts / limit),
+      currentPage: page,
+      data: results,
+    });
   } catch (err) {
     console.error("Error fetching products: ", err.message);
     res
@@ -30,6 +43,35 @@ const getProductById = async (req, res) => {
     res.status(200).json(result);
   } catch (err) {
     console.error(err);
+    res
+      .status(500)
+      .json({ message: "Server Error fetching product", error: err });
+  }
+};
+
+const getShopProducts = async (req, res) => {
+  try {
+    const shopId = req.params.shopId;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+
+    const result = await Product.find({ user: shopId })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .exec();
+
+    const totalProducts = await Product.countDocuments({ user: shopId });
+
+    res.status(200).json({
+      count: result.length,
+      totalPage: Math.ceil(totalProducts / limit),
+      currentPage: page,
+      data: result,
+    });
+  } catch (err) {
+    console.error(err.message);
     res
       .status(500)
       .json({ message: "Server Error fetching product", error: err });
@@ -96,6 +138,7 @@ const deleteProductContrl = async (req, res) => {
 module.exports = {
   getAllProductsContrl,
   getProductById,
+  getShopProducts,
   createProductContrl,
   updateProductContrl,
   deleteProductContrl,
