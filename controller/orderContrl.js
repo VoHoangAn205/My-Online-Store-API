@@ -1,48 +1,82 @@
-const Order = require("../models/Order");
+const { Order, SubOrder } = require("../models/Order");
 const Product = require("../models/Product");
 
 const createOrder = async (req, res) => {
   try {
     const cartItems = req.body.cartItems;
     const user = req.userId;
+    let totalPrice = 0;
+    let groupProduct = {};
     // mapping product's id
     const itemIds = cartItems.map((item) => item.productId);
 
     const foundProducts = await Product.find({
       _id: { $in: itemIds },
     })
-      .select("name price")
+      .select("name price user")
+      .lean()
       .exec();
 
     if (foundProducts.length !== itemIds.length) {
-      return res.status(400).json({ message: "cannot find product" });
+      return res
+        .status(400)
+        .json({ message: "Cannot find products or some product are missing" });
     }
 
-    // add quantity to product info
-    const orderItems = cartItems.map((cartItem) => {
+    // create parent order
+    const parentOrder = await Order.create({ user });
+
+    for (const item of cartItems) {
       const product = foundProducts.find(
-        (product) => product._id.toString() === cartItem.productId,
+        (product) => product._id.toString() === item.productId,
       );
 
-      if (product) {
-        return { ...product.toObject(), quantity: cartItem.quantity };
+      if (!product) {
+        return res
+          .status(400)
+          .json({ message: `product '${item.productId}' not found` });
       }
-    });
 
-    const totalPrice = cartItems.reduce((sum, cartItem) => {
-      const product = foundProducts.find(
-        (product) => product._id.toString() === cartItem.productId,
-      );
+      const shopId = product.user;
+      const totalItem = product.price * item.quantity;
+      totalPrice += totalItem;
 
-      if (product) return sum + product.price * cartItem.quantity;
+      if (!groupProduct[shopId]) {
+        groupProduct[shopId] = {
+          shopId,
+          parentOrder,
+          subTotalPrice: 0,
+          orderItems: [],
+        };
+      }
 
-      return sum;
-    }, 0);
+      groupProduct[shopId].subTotalPrice += totalItem;
+      groupProduct[shopId].orderItems.push({
+        product: product._id,
+        name: product.name,
+        price: product.price,
+        quantity: item.quantity,
+      });
+    }
 
-    const data = { user, totalPrice, orderItems };
-    const result = await Order.create(data);
+    const finalOrderItem = Object.values(groupProduct);
+    // create subOrder
+    const subOrder = await SubOrder.create(finalOrderItem);
 
-    res.status(200).json({ message: "order create successful", data: result });
+    const subOrderIds = subOrder.map((sub) => sub._id);
+    // update parent order
+    const result = await Order.findByIdAndUpdate(
+      parentOrder._id,
+      {
+        totalPrice,
+        $push: { subOrders: { $each: subOrderIds } },
+      },
+      { new: true },
+    );
+
+    res
+      .status(200)
+      .json({ message: "order create successful", data: subOrder });
   } catch (err) {
     console.error(err);
     res
