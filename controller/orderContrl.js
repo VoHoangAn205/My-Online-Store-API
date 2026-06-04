@@ -1,3 +1,4 @@
+const sendEmail = require("../config/emailConfig");
 const { Order, SubOrder } = require("../models/Order");
 const Product = require("../models/Product");
 
@@ -71,7 +72,7 @@ const createOrder = async (req, res) => {
         totalPrice,
         $push: { subOrders: { $each: subOrderIds } },
       },
-      { new: true },
+      { returnDocument: "after" },
     );
 
     res
