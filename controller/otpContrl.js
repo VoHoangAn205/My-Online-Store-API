@@ -1,3 +1,4 @@
+const sendEmail = require("../config/emailConfig");
 const Otp = require("../models/Otp");
 const User = require("../models/User");
 const generateOtp = require("../utils/generateOtpNumber");
@@ -22,7 +23,7 @@ const handleRequestOtp = async (req, res) => {
 
     const result = await Otp.findOneAndUpdate(
       { email },
-      { otp: otpCode, createAt: Date.now },
+      { otp: otpCode, createAt: new Date() },
       { upsert: true, returnDocument: "after" },
     );
 
@@ -38,6 +39,10 @@ const handleRequestOtp = async (req, res) => {
       subject: "Your Registration Verification Code",
       html: emailHtml,
     });
+
+    res
+      .status(200)
+      .json({ message: "the OTP has been sent to your email, Please check!" });
   } catch (err) {
     console.error(err.message);
     res
@@ -45,3 +50,5 @@ const handleRequestOtp = async (req, res) => {
       .json({ message: "Request otp failed: ", error: err.message });
   }
 };
+
+module.exports = { handleRequestOtp };

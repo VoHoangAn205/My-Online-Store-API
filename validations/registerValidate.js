@@ -20,3 +20,5 @@ const registerValidate = Joi.object({
     }),
   otp: Joi.string().length(6).required(),
 });
+
+module.exports = registerValidate;
