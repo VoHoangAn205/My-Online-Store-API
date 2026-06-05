@@ -3,7 +3,7 @@ const Otp = require("../models/Otp");
 const User = require("../models/User");
 const generateOtp = require("../utils/generateOtpNumber");
 
-const handleRequestOtp = async (req, res) => {
+const requestRegistrationOtp = async (req, res) => {
   try {
     const email = req.body.email;
 
@@ -51,4 +51,4 @@ const handleRequestOtp = async (req, res) => {
   }
 };
 
-module.exports = { handleRequestOtp };
+module.exports = { requestRegistrationOtp };

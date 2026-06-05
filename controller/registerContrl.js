@@ -18,11 +18,21 @@ const handleRegister = async (req, res) => {
       return res.status(400).json({ message: "Invalid verification code" });
     }
 
-    const duplicate = await User.findOne({ email }).exec();
-    if (duplicate) {
-      return res
-        .status(409)
-        .json({ message: "This email is already registered" });
+    const existedUser = await User.findOne({
+      $or: [{ email: email.toLowerCase() }, { username }],
+    }).exec();
+
+    if (existedUser) {
+      if (existedUser.email) {
+        return res
+          .status(409)
+          .json({ message: "This email is already registered" });
+      }
+      if (existedUser.username) {
+        return res
+          .status(409)
+          .json({ message: "This name is already registered" });
+      }
     }
 
     // hash the password
