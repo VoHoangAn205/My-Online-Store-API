@@ -57,12 +57,12 @@ app.all(/.*/, (req, res) => {
   }
 });
 
+app.use(errorHandler);
+
 app.use((err, req, res, next) => {
   console.error("GLOBAL ERROR CATCHED:", err.message);
   res.status(500).json({ error: err.message });
 });
-
-app.use(errorHandler);
 
 mongoose.connection.once("open", () => {
   console.log("connected to mongoDB");

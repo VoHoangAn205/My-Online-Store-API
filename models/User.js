@@ -23,6 +23,10 @@ const userSchema = new Schema(
       Admin: Number,
       Salesman: Number,
     },
+    invalidLoginCount: {
+      type: Number,
+      default: 0,
+    },
     refreshToken: String,
   },
   { timestamps: true },
