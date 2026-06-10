@@ -21,7 +21,7 @@ const orderSchema = new Schema(
 
 const subOrderSchema = new Schema(
   {
-    shopId: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
