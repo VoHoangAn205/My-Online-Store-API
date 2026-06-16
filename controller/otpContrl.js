@@ -1,4 +1,4 @@
-const sendEmail = require("../config/emailConfig");
+const { sendEmail } = require("../helper/sendEmail");
 const Otp = require("../models/Otp");
 const User = require("../models/User");
 const generateOtp = require("../utils/generateOtpNumber");

@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const sendEmail = require("../config/emailConfig");
+const { sendEmail } = require("../helper/sendEmail");
 
 const handleLogin = async (req, res) => {
   const { email, password } = req.body;
@@ -9,9 +9,7 @@ const handleLogin = async (req, res) => {
   const foundUser = await User.findOne({ email }).exec();
 
   if (!foundUser) {
-    return res
-      .status(401)
-      .json({ message: "This email address has not been registered yet" });
+    return res.status(401).json({ message: "Invalid email or password" });
   }
 
   const invalidCount = foundUser?.invalidLoginCount;

@@ -18,38 +18,4 @@ transporter.verify((error, success) => {
   }
 });
 
-const sendEmail = async ({ to, subject, text, html }) => {
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: to,
-    subject: subject,
-    text: text,
-    html: html,
-  };
-  try {
-    const info = await transporter.sendMail(mailOptions);
-
-    if (info.rejected.length > 0) {
-      console.warn("warning: Some recipients were rejected: ", info.rejected);
-    }
-    return info;
-  } catch (err) {
-    switch (err.code) {
-      case "ECONNECTION":
-      case "ETIMEDOUT":
-        console.error("Network error - retry later:", err.message);
-        break;
-      case "EAUTH":
-        console.error("Authentication failed:", err.message);
-        break;
-      case "EENVELOPE":
-        console.error("Invalid recipients:", err.rejected);
-        break;
-      default:
-        console.error("Send failed:", err.message);
-    }
-    throw err;
-  }
-};
-
-module.exports = sendEmail;
+module.exports = transporter;
