@@ -1,33 +1,34 @@
 const User = require("../models/User");
 
 const handleLogout = async (req, res) => {
-  const cookies = req.cookies;
-  if (!cookies?.jwt) return res.sendStatus(204);
+  try {
+    const cookies = req.cookies;
+    if (!cookies?.jwt) return res.sendStatus(204);
 
-  const refreshToken = cookies.jwt;
+    const refreshToken = cookies.jwt;
 
-  const foundUser = await User.findOne({ refreshToken }).exec();
+    const foundUser = await User.findOne({ refreshToken }).exec();
 
-  if (!foundUser) {
-    res.clearCookie("jwt", {
+    const cookieOption = {
       secure: true,
       httpOnly: true,
       sameSite: "None",
-      maxAge: 24 * 60 * 60 * 1000,
-    });
+    };
+
+    if (!foundUser) {
+      res.clearCookie("jwt", cookieOption);
+      return res.sendStatus(204);
+    }
+
+    foundUser.refreshToken = "";
+    await foundUser.save();
+
+    res.clearCookie("jwt", cookieOption);
     return res.sendStatus(204);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: "Logout failed: ", message: err.message });
   }
-
-  foundUser.refreshToken = "";
-  const result = await foundUser.save();
-
-  res.clearCookie("jwt", {
-    secure: true,
-    httpOnly: true,
-    sameSite: "None",
-    maxAge: 24 * 60 * 60 * 1000,
-  });
-  return res.sendStatus(204);
 };
 
 module.exports = { handleLogout };

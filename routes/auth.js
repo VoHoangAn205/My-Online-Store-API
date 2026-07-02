@@ -7,4 +7,3 @@ const validateBody = require("../middleware/validateBody");
 router.route("/").post(validateBody(loginValidate), authContrl.handleLogin);
 
 module.exports = router;
-``;
