@@ -6,14 +6,13 @@ const verifyRole = (...allowedRoles) => {
 
     const rolesArray = [...allowedRoles];
 
-    const result = req.roles
-      .map((role) => rolesArray.includes(role))
-      .find((val) => val === true);
+    const hasPermission = req.roles.some((role) => rolesArray.includes(role));
 
-    if (!result)
+    if (!hasPermission) {
       return res
-        .status(401)
-        .json({ message: "you are not authorized to do this action" });
+        .status(403)
+        .json({ message: "You are not authorized to perform this action" });
+    }
     next();
   };
 };

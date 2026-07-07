@@ -114,9 +114,7 @@ const getAllParentOrder = async (req, res) => {
       return res.status(400).json({ message: "Cannot find your order" });
     }
 
-    res
-      .status(200)
-      .json({ message: "Get all parents order successful", data: result });
+    res.status(200).json({ data: result });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Get orders failed", error: err.message });

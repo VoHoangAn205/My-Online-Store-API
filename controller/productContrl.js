@@ -26,7 +26,7 @@ const getAllProductsContrl = async (req, res) => {
     console.error("Error fetching products: ", err.message);
     res
       .status(500)
-      .json({ message: "Server Error fetching product", error: err });
+      .json({ message: "Server Error fetching product", error: err.message });
   }
 };
 
@@ -42,10 +42,10 @@ const getProductById = async (req, res) => {
 
     res.status(200).json(result);
   } catch (err) {
-    console.error(err);
+    console.error(err.message);
     res
       .status(500)
-      .json({ message: "Server Error fetching product", error: err });
+      .json({ message: "Server Error fetching product", error: err.message });
   }
 };
 
@@ -74,7 +74,36 @@ const getShopProducts = async (req, res) => {
     console.error(err.message);
     res
       .status(500)
-      .json({ message: "Server Error fetching product", error: err });
+      .json({ message: "Server Error fetching product", error: err.message });
+  }
+};
+
+const getAllUserProducts = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const page = parseInt(req.params.page) || 1;
+    const limit = parseInt(req.params.limit) || 20;
+    const skip = (page - 1) * limit;
+
+    const result = await Product.find({ user: userId })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createAt: -1 })
+      .exec();
+
+    const totalProducts = await Product.countDocuments({ user: userId });
+
+    res.status(200).json({
+      count: result.length,
+      totalPage: Math.ceil(totalProducts / limit),
+      currentPage: page,
+      data: result,
+    });
+  } catch (err) {
+    console.error(err.message);
+    res
+      .status(500)
+      .json({ message: "Server Error fetching product", error: err.message });
   }
 };
 
@@ -87,8 +116,10 @@ const createProductContrl = async (req, res) => {
     const result = await Product.create(data);
     res.status(201).json(result);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Cannot create product", error: err });
+    console.error(err.message);
+    res
+      .status(500)
+      .json({ message: "Cannot create product", error: err.message });
   }
 };
 
@@ -110,7 +141,9 @@ const updateProductContrl = async (req, res) => {
     res.status(200).json({ message: "Update successful", data: result });
   } catch (err) {
     console.error("Cannot update product: ", err.message);
-    res.status(500).json({ message: "Cannot update product", error: err });
+    res
+      .status(500)
+      .json({ message: "Cannot update product", error: err.message });
   }
 };
 
@@ -128,7 +161,7 @@ const deleteProductContrl = async (req, res) => {
 
     res.status(200).json({ message: "product deleted successful" });
   } catch (err) {
-    console.error(err);
+    console.error(err.message);
     res
       .status(500)
       .json({ message: "Cannot delete product", error: err.message });
@@ -139,6 +172,7 @@ module.exports = {
   getAllProductsContrl,
   getProductById,
   getShopProducts,
+  getAllUserProducts,
   createProductContrl,
   updateProductContrl,
   deleteProductContrl,

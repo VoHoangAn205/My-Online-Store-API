@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const ROLE_LIST = require("../config/roles_list");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
@@ -16,12 +17,8 @@ const userSchema = new Schema(
       required: true,
     },
     roles: {
-      User: {
-        type: Number,
-        default: 2001,
-      },
-      Admin: Number,
-      Salesman: Number,
+      type: [Number],
+      default: [ROLE_LIST.User],
     },
     invalidLoginCount: {
       type: Number,

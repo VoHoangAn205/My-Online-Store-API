@@ -17,6 +17,15 @@ router
     productContrl.createProductContrl,
   );
 
+router.get("/shop/:shopId", productContrl.getShopProducts);
+
+router.get(
+  "/myOwnProducts",
+  verifyJWT,
+  verifyRole(ROLES_LIST.Salesman),
+  productContrl.getAllUserProducts,
+);
+
 router
   .route("/:id")
   .get(productContrl.getProductById)
@@ -31,7 +40,5 @@ router
     verifyRole(ROLES_LIST.Salesman, ROLES_LIST.Admin),
     productContrl.deleteProductContrl,
   );
-
-router.get("/shop/:shopId", productContrl.getShopProducts);
 
 module.exports = router;
