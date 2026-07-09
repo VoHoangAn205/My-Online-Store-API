@@ -57,10 +57,14 @@ const getShopProducts = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const result = await Product.find({ user: shopId })
+      .populate("gallery")
+      .populate("category")
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 })
       .exec();
+
+    if (!result) return res.status(404).json({ message: "Products not found" });
 
     const totalProducts = await Product.countDocuments({ user: shopId });
 
@@ -81,15 +85,20 @@ const getShopProducts = async (req, res) => {
 const getAllUserProducts = async (req, res) => {
   try {
     const userId = req.userId;
-    const page = parseInt(req.params.page) || 1;
-    const limit = parseInt(req.params.limit) || 20;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
+    console.log("limit ", limit);
 
     const result = await Product.find({ user: userId })
+      .populate("gallery")
+      .populate("category")
       .skip(skip)
       .limit(limit)
       .sort({ createAt: -1 })
       .exec();
+
+    if (!result) return res.status(404).json({ message: "Product not found" });
 
     const totalProducts = await Product.countDocuments({ user: userId });
 
