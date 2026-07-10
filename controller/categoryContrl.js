@@ -1,7 +1,7 @@
 const Category = require("../models/Category");
 
 const getAllCategory = async (req, res) => {
-  const data = await Category.find().exec();
+  const data = await Category.find().select("name").exec();
   if (!data) return res.sendStatus(404);
   return res.status(200).json({ data });
 };
