@@ -6,6 +6,7 @@ const createProduct = Joi.object({
   gallery: Joi.string().required(),
   description: Joi.string().required(),
   price: Joi.number().min(1).required(),
+  status: Joi.string().valid("Available", "Sold out", "Discontinued"),
   stock: Joi.number().integer().min(0).required(),
 });
 

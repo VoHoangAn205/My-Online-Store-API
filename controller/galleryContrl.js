@@ -15,9 +15,7 @@ const uploadGallery = async (req, res) => {
 
     const results = await Gallery.create({ images });
 
-    res
-      .status(200)
-      .json({ message: "gallery uploaded successfully", data: results });
+    res.status(200).json(results);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Upload failed", error: err.message });
