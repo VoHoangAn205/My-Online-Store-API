@@ -10,10 +10,8 @@ const ROLE_LIST = require("../../config/roles_list");
 router
   .route("/")
   .get(cartContrl.getCart)
-  .put(
-    verifyRole(ROLE_LIST.Salesman, ROLE_LIST.Admin),
-    validateBody(cartValidate),
-    cartContrl.updateCart,
-  );
+  .put(validateBody(cartValidate), cartContrl.updateCart);
+
+router.delete("/:id", cartContrl.deleteCart);
 
 module.exports = router;

@@ -51,9 +51,6 @@ const updateCart = async (req, res) => {
       (item) => item.productId.toString() === productId,
     );
 
-    console.log(indexCart);
-    console.log("abcd");
-
     if (indexCart > -1) {
       cart.cartItems[indexCart].quantity += Number(quantity);
     } else {
@@ -69,4 +66,26 @@ const updateCart = async (req, res) => {
   }
 };
 
-module.exports = { getCart, updateCart };
+const deleteCart = async (req, res) => {
+  try {
+    const user = req.userId;
+    const productId = req.params.id;
+
+    const updateCart = await Cart.findOneAndUpdate(
+      { user },
+      { $pull: { cartItems: { productId } } },
+      { returnDocument: "after" },
+    );
+
+    if (!updateCart) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.status(200).json(updateCart);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: "Server cannot delete Cart" });
+  }
+};
+
+module.exports = { getCart, updateCart, deleteCart };
