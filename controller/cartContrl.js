@@ -7,7 +7,7 @@ const getCart = async (req, res) => {
 
     const result = await Cart.findOne({ user })
       .populate({
-        path: "cartItems.productId",
+        path: "cartItems.product",
         select: "name price gallery status stock",
         populate: { path: "gallery", select: "images url" },
       })
@@ -29,32 +29,38 @@ const getCart = async (req, res) => {
 const updateCart = async (req, res) => {
   try {
     const user = req.userId;
-    const { productId, quantity = 1 } = req.body;
+    const product = req.body.product;
+    const quantity = parseInt(req.body.quantity) || 1;
 
-    const foundProduct = await Product.findById(productId).exec();
+    const foundProduct = await Product.findById(product).exec();
 
     if (!foundProduct) {
       return res.status(404).json("Cannot found this product");
     }
 
-    const cart = await Cart.findOne({ user }).exec();
-
+    const cart = await Cart.findOne({ user })
+      .populate({
+        path: "cartItems.product",
+        select: "name price gallery status stock",
+        populate: { path: "gallery", select: "images url" },
+      })
+      .exec();
     if (!cart) {
       const createCart = await Cart.create({
         user,
-        cartItems: [{ productId, quantity }],
+        cartItems: [{ product, quantity }],
       });
       return res.status(200).json(createCart);
     }
 
     const indexCart = cart.cartItems.findIndex(
-      (item) => item.productId.toString() === productId,
+      (item) => item.product._id.toString() === product,
     );
 
     if (indexCart > -1) {
-      cart.cartItems[indexCart].quantity += Number(quantity);
+      cart.cartItems[indexCart].quantity += quantity;
     } else {
-      cart.cartItems.push({ productId, quantity });
+      cart.cartItems.push({ product, quantity });
     }
 
     const result = await cart.save();
@@ -69,13 +75,17 @@ const updateCart = async (req, res) => {
 const deleteCart = async (req, res) => {
   try {
     const user = req.userId;
-    const productId = req.params.id;
+    const product = req.params.id;
 
     const updateCart = await Cart.findOneAndUpdate(
       { user },
-      { $pull: { cartItems: { productId } } },
+      { $pull: { cartItems: { product } } },
       { returnDocument: "after" },
-    );
+    ).populate({
+      path: "cartItems.product",
+      select: "name price gallery status stock",
+      populate: { path: "gallery", select: "images url" },
+    });
 
     if (!updateCart) {
       return res.status(404).json({ message: "Product not found" });

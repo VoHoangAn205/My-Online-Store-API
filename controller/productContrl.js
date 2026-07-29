@@ -1,4 +1,10 @@
 const Product = require("../models/Product");
+const notFoundData = {
+  count: 0,
+  totalPage: 0,
+  currentPage: 1,
+  data: [],
+};
 
 const getAllProductsContrl = async (req, res) => {
   try {
@@ -15,6 +21,97 @@ const getAllProductsContrl = async (req, res) => {
       .populate("user", "username")
       .exec();
     const totalProducts = await Product.countDocuments();
+
+    res.status(200).json({
+      count: results.length,
+      totalPage: Math.ceil(totalProducts / limit),
+      currentPage: page,
+      data: results,
+    });
+  } catch (err) {
+    console.error("Error fetching products: ", err.message);
+    res
+      .status(500)
+      .json({ message: "Server Error fetching product", error: err.message });
+  }
+};
+
+const searchProduct = async (req, res) => {
+  try {
+    const query = req.query.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+
+    const results = await Product.find({
+      $or: [
+        { name: { $regex: query, $options: "i" } },
+        { description: { $regex: query, $options: "i" } },
+      ],
+    })
+      .populate("category", "name")
+      .populate("gallery")
+      .populate("user", "username")
+      .limit(limit)
+      .skip(skip)
+      .sort({ createAt: -1 })
+      .exec();
+
+    if (!results) {
+      return res.status(200).json(notFoundData);
+    }
+
+    const totalProducts = await Product.countDocuments({
+      $or: [
+        { name: { $regex: query, $options: "i" } },
+        { description: { $regex: query, $options: "i" } },
+      ],
+    });
+
+    res.status(200).json({
+      count: results.length,
+      totalPage: Math.ceil(totalProducts / limit),
+      currentPage: page,
+      data: results,
+    });
+  } catch (err) {
+    console.error("Error fetching products: ", err.message);
+    res
+      .status(500)
+      .json({ message: "Server Error fetching product", error: err.message });
+  }
+};
+
+const getProductByCategory = async (req, res) => {
+  try {
+    const categoryId = req.params.id;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+
+    if (categoryId.length !== 24)
+      return res
+        .status(400)
+        .json({ message: "Category id length must be 24 character." });
+
+    const results = await Product.find({
+      category: { $all: categoryId },
+    })
+      .populate("category", "name")
+      .populate("gallery")
+      .populate("user", "username")
+      .limit(limit)
+      .skip(skip)
+      .sort({ createAt: -1 })
+      .exec();
+
+    if (!results) {
+      return res.status(200).json(notFoundData);
+    }
+
+    const totalProducts = await Product.countDocuments({
+      category: { $all: categoryId },
+    });
 
     res.status(200).json({
       count: results.length,
@@ -88,7 +185,6 @@ const getAllUserProducts = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
-    console.log("limit ", limit);
 
     const result = await Product.find({ user: userId })
       .populate("gallery")
@@ -182,7 +278,9 @@ module.exports = {
   getProductById,
   getShopProducts,
   getAllUserProducts,
+  getProductByCategory,
   createProductContrl,
   updateProductContrl,
   deleteProductContrl,
+  searchProduct,
 };

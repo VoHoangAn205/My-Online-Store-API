@@ -93,9 +93,7 @@ const createOrder = async (req, res) => {
       totalPrice,
       finalOrderItem,
     );
-    res
-      .status(200)
-      .json({ message: "order create successful", data: subOrder });
+    res.status(200).json(subOrder);
   } catch (err) {
     console.error(err);
     res

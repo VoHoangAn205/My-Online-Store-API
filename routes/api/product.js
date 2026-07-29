@@ -18,6 +18,8 @@ router
   );
 
 router.get("/shop/:shopId", productContrl.getShopProducts);
+router.get("/search", productContrl.searchProduct);
+router.get("/category/:id", productContrl.getProductByCategory);
 
 router.get(
   "/myOwnProducts",
