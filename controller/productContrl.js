@@ -1,4 +1,5 @@
 const Product = require("../models/Product");
+const getSortCriteria = require("../utils/getSortCriteria");
 const notFoundData = {
   count: 0,
   totalPage: 0,
@@ -88,6 +89,7 @@ const getProductByCategory = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
+    const sortConfig = getSortCriteria(req.query.sort);
 
     if (categoryId.length !== 24)
       return res
@@ -102,7 +104,7 @@ const getProductByCategory = async (req, res) => {
       .populate("user", "username")
       .limit(limit)
       .skip(skip)
-      .sort({ createAt: -1 })
+      .sort(sortConfig)
       .exec();
 
     if (!results) {
