@@ -9,6 +9,7 @@ const categorySchema = new Schema(
       ref: "User",
       required: true,
     },
+    emoji: { type: String, required: true, unique: true, trim: true },
   },
   { timestamps: true },
 );

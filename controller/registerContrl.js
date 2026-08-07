@@ -44,10 +44,7 @@ const handleRegister = async (req, res) => {
       password: hashedPwd,
     });
     await Otp.deleteOne({ _id: otpRecord._id });
-    res.status(201).json({
-      message: `You are registered successful`,
-      data: { username: result.username, email: result.email },
-    });
+    res.status(201).json({ username: result.username, email: result.email });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error registering user" });
