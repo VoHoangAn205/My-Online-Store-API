@@ -24,7 +24,7 @@ const getAllProductsContrl = async (req, res) => {
     const totalProducts = await Product.countDocuments();
 
     res.status(200).json({
-      count: results.length,
+      count: totalProducts,
       totalPage: Math.ceil(totalProducts / limit),
       currentPage: page,
       data: results,
@@ -70,7 +70,7 @@ const searchProduct = async (req, res) => {
     });
 
     res.status(200).json({
-      count: results.length,
+      count: totalProducts,
       totalPage: Math.ceil(totalProducts / limit),
       currentPage: page,
       data: results,
@@ -116,7 +116,7 @@ const getProductByCategory = async (req, res) => {
     });
 
     res.status(200).json({
-      count: results.length,
+      count: totalProducts,
       totalPage: Math.ceil(totalProducts / limit),
       currentPage: page,
       data: results,
@@ -168,7 +168,7 @@ const getShopProducts = async (req, res) => {
     const totalProducts = await Product.countDocuments({ user: shopId });
 
     res.status(200).json({
-      count: result.length,
+      count: totalProducts,
       totalPage: Math.ceil(totalProducts / limit),
       currentPage: page,
       data: result,
@@ -201,7 +201,7 @@ const getAllUserProducts = async (req, res) => {
     const totalProducts = await Product.countDocuments({ user: userId });
 
     res.status(200).json({
-      count: result.length,
+      count: totalProducts,
       totalPage: Math.ceil(totalProducts / limit),
       currentPage: page,
       data: result,

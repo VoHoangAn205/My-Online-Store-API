@@ -1,12 +1,16 @@
 const getSortCriteria = (type) => {
   switch (type) {
-    case "asc":
+    case "priceAsc":
       return { price: 1 };
       break;
-    case "desc":
+    case "priceDesc":
       return { price: -1 };
+      break;
+    case "bestSeller":
+      return { sold: -1 };
+      break;
     default:
-      return { createAt: -1 };
+      return { createdAt: -1 };
       break;
   }
 };

@@ -3,6 +3,7 @@ const renderHtmlEmailItem = require("../helper/renderHtmlEmailItem");
 const { Order, SubOrder } = require("../models/Order");
 const Product = require("../models/Product");
 const User = require("../models/User");
+const getSortCriteria = require("../utils/getSortCriteria");
 
 const createOrder = async (req, res) => {
   try {
@@ -53,6 +54,7 @@ const createOrder = async (req, res) => {
       if (!groupProduct[shopId]) {
         groupProduct[shopId] = {
           shopId,
+          user,
           parentOrder,
           historicalShopSnapshot: {
             username: shopName,
@@ -109,16 +111,56 @@ const getAllParentOrder = async (req, res) => {
     const result = await Order.find({ user }).populate("subOrders").exec();
 
     if (!result) {
-      return res.status(400).json({ message: "Cannot find your order" });
+      return res.status(200).json([]);
     }
 
-    res.status(200).json({ data: result });
+    res.status(200).json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Get orders failed", error: err.message });
   }
 };
 
-const getAllSubOrder = (req, res) => {};
+const getSubOrder = async (req, res) => {
+  try {
+    const shopId = req.userId;
+    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(req.query.page) || 1;
+    const status = req.query.status || "all";
+    const configSort = getSortCriteria(req.query.sort);
+    const skip = (page - 1) * limit;
 
-module.exports = { createOrder, getAllParentOrder };
+    const filter = { shopId };
+    if (status !== "all") filter.subStatus = status;
+
+    const results = await SubOrder.find(filter)
+      .limit(limit)
+      .skip(skip)
+      .sort(configSort)
+      .populate("user", "username email")
+      .exec();
+
+    const totalProducts = await SubOrder.countDocuments(filter);
+
+    if (!results) {
+      return res.status(200).json([]);
+    }
+
+    res.status(200).json({
+      count: totalProducts,
+      totalPage: Math.ceil(totalProducts / limit),
+      currentPage: page,
+      data: results,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Get orders failed", error: err.message });
+  }
+};
+
+// const updateOrderStatus = (req, res) => {
+//   const shopId = req.userId;
+//   const status = req.body.status
+// };
+
+module.exports = { createOrder, getAllParentOrder, getSubOrder };

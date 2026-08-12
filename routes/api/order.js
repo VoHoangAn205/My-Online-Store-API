@@ -11,4 +11,10 @@ router.post("/", validateBody(createOrder), orderContrl.createOrder);
 
 router.get("/getAllParents", orderContrl.getAllParentOrder);
 
+router.get(
+  "/getShopOrders",
+  verifyRole(ROLES_LIST.Salesman, ROLES_LIST.Admin),
+  orderContrl.getSubOrder,
+);
+
 module.exports = router;

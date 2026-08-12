@@ -35,6 +35,11 @@ const subOrderSchema = new Schema(
       username: { type: String, required: true },
       email: { type: String, required: true },
     },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     orderItems: [
       {
         name: { type: String, required: true },
@@ -51,7 +56,7 @@ const subOrderSchema = new Schema(
       type: String,
       required: true,
       default: "pending",
-      enum: ["pending", "Processing", "shipped", "delivered", "cancelled"],
+      enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
     },
     subTotalPrice: { type: Number, required: true },
   },
@@ -60,4 +65,6 @@ const subOrderSchema = new Schema(
 
 const Order = mongoose.model("Order", orderSchema);
 const SubOrder = mongoose.model("SubOrder", subOrderSchema);
+
+subOrderSchema.index({ shopId: 1, subStatus: 1 });
 module.exports = { Order, SubOrder };

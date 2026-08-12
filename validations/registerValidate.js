@@ -14,9 +14,9 @@ const registerValidate = Joi.object({
     .required()
     .messages({
       "string.pattern.base":
-        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
-      "string.min": "Password must be at least 8 characters long.",
-      "string.max": "Password cannot exceed 30 characters.",
+        " Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+      "string.min": " Password must be at least 8 characters long.",
+      "string.max": " Password cannot exceed 30 characters.",
     }),
   otp: Joi.string().length(6).required(),
 });
