@@ -4,6 +4,7 @@ const { Order, SubOrder } = require("../models/Order");
 const Product = require("../models/Product");
 const User = require("../models/User");
 const getSortCriteria = require("../utils/getSortCriteria");
+const ORDERSTATUS_LIST = require("../config/orderStatus_list");
 
 const createOrder = async (req, res) => {
   try {
@@ -158,9 +159,80 @@ const getSubOrder = async (req, res) => {
   }
 };
 
-// const updateOrderStatus = (req, res) => {
-//   const shopId = req.userId;
-//   const status = req.body.status
-// };
+const updateOrderStatusForShop = async (req, res) => {
+  try {
+    const shopId = req.userId;
+    const subOrderId = req.params.id;
 
-module.exports = { createOrder, getAllParentOrder, getSubOrder };
+    const foundOrder = await SubOrder.findById(subOrderId).exec();
+
+    if (!foundOrder)
+      return res.status(404).json({ message: "This order is not exist" });
+    // Authorization check
+    if (foundOrder.shopId.toString() !== shopId) {
+      return res
+        .status(403)
+        .json({ message: "You have not authorize to do this action" });
+    }
+
+    const currentStatusIndex = ORDERSTATUS_LIST.indexOf(foundOrder.subStatus);
+    const shippedIndex = ORDERSTATUS_LIST.indexOf("shipped");
+
+    if (currentStatusIndex >= shippedIndex) {
+      return res
+        .status(400)
+        .json({ message: "Unable to update to the next status" });
+    }
+
+    foundOrder.subStatus = ORDERSTATUS_LIST[currentStatusIndex + 1];
+
+    const result = await foundOrder.save();
+
+    res.status(200).json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Get orders failed", error: err.message });
+  }
+};
+
+const updateOrderStatusForUser = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const subOrderId = req.params.id;
+
+    const foundOrder = await SubOrder.findById(subOrderId).exec();
+
+    if (!foundOrder)
+      return res.status(404).json({ message: "This order is not exist" });
+    // Authorization check
+    if (foundOrder.user.toString() !== userId)
+      return res
+        .status(403)
+        .json({ message: "You have not authorize to do this action" });
+
+    const currentStatusIndex = ORDERSTATUS_LIST.indexOf(foundOrder.subStatus);
+    const shippedIndex = ORDERSTATUS_LIST.indexOf("shipped");
+
+    if (currentStatusIndex !== shippedIndex)
+      return res
+        .status(400)
+        .json({ message: "Unable to update to the next status" });
+
+    foundOrder.subStatus = ORDERSTATUS_LIST[currentStatusIndex + 1];
+
+    const result = await foundOrder.save();
+
+    res.status(200).json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Get orders failed", error: err.message });
+  }
+};
+
+module.exports = {
+  createOrder,
+  getAllParentOrder,
+  getSubOrder,
+  updateOrderStatusForShop,
+  updateOrderStatusForUser,
+};

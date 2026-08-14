@@ -11,6 +11,13 @@ router.post("/", validateBody(createOrder), orderContrl.createOrder);
 
 router.get("/getAllParents", orderContrl.getAllParentOrder);
 
+router.put(
+  "/shopOrderStatus/:id",
+  verifyRole(ROLES_LIST.Salesman, ROLES_LIST.Admin),
+  orderContrl.updateOrderStatusForShop,
+);
+router.put("/userOrderStatus/:id", orderContrl.updateOrderStatusForUser);
+
 router.get(
   "/getShopOrders",
   verifyRole(ROLES_LIST.Salesman, ROLES_LIST.Admin),
