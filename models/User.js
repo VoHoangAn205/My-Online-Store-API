@@ -25,6 +25,10 @@ const userSchema = new Schema(
       type: Number,
       default: 0,
     },
+    isPendingVendor: {
+      type: Boolean,
+      default: false,
+    },
     refreshToken: String,
   },
   { timestamps: true },
