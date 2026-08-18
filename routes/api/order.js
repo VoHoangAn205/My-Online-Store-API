@@ -11,12 +11,21 @@ router.post("/", validateBody(createOrder), orderContrl.createOrder);
 
 router.get("/getAllParents", orderContrl.getAllParentOrder);
 
+router.put("/userUpdateStatus/:id", orderContrl.updateOrderStatusForUser);
+
+router.put("/userCancel/:id", orderContrl.userCancelOrder);
+
 router.put(
-  "/shopOrderStatus/:id",
+  "/shopUpdateStatus/:id",
   verifyRole(ROLES_LIST.Salesman, ROLES_LIST.Admin),
   orderContrl.updateOrderStatusForShop,
 );
-router.put("/userOrderStatus/:id", orderContrl.updateOrderStatusForUser);
+
+router.put(
+  "/shopCancel/:id",
+  verifyRole(ROLES_LIST.Salesman, ROLES_LIST.Admin),
+  orderContrl.shopCancelOrder,
+);
 
 router.get(
   "/getShopOrders",

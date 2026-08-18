@@ -172,7 +172,7 @@ const updateOrderStatusForShop = async (req, res) => {
     if (foundOrder.shopId.toString() !== shopId) {
       return res
         .status(403)
-        .json({ message: "You have not authorize to do this action" });
+        .json({ message: "You have not authorize to perform this action" });
     }
 
     const currentStatusIndex = ORDERSTATUS_LIST.indexOf(foundOrder.subStatus);
@@ -208,7 +208,7 @@ const updateOrderStatusForUser = async (req, res) => {
     if (foundOrder.user.toString() !== userId)
       return res
         .status(403)
-        .json({ message: "You have not authorize to do this action" });
+        .json({ message: "You have not authorize to perform this action" });
 
     const currentStatusIndex = ORDERSTATUS_LIST.indexOf(foundOrder.subStatus);
     const shippedIndex = ORDERSTATUS_LIST.indexOf("shipped");
@@ -229,10 +229,88 @@ const updateOrderStatusForUser = async (req, res) => {
   }
 };
 
+const shopCancelOrder = async (req, res) => {
+  try {
+    const shopId = req.userId;
+    const orderId = req.params.id;
+
+    const foundOrder = await SubOrder.findById(orderId).exec();
+
+    if (!foundOrder)
+      return res.status(404).json({ message: "This order is not exist" });
+    console.log(foundOrder.user.toString(), "    ", shopId);
+    if (foundOrder.shopId.toString() !== shopId) {
+      return res
+        .status(403)
+        .json({ message: "You have not authorize to perform this action" });
+    }
+
+    const currentStatusIndex = ORDERSTATUS_LIST.indexOf(foundOrder.subStatus);
+    const shippedIndex = ORDERSTATUS_LIST.indexOf("shipped");
+    const cancelledIndex = ORDERSTATUS_LIST.indexOf("cancelled");
+
+    if (currentStatusIndex >= shippedIndex) {
+      return res
+        .status(400)
+        .json({
+          message: "Cannot update status of shipped or cancelled order",
+        });
+    }
+
+    foundOrder.subStatus = ORDERSTATUS_LIST[cancelledIndex];
+
+    const result = await foundOrder.save();
+
+    res.status(200).json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Get orders failed", error: err.message });
+  }
+};
+
+const userCancelOrder = async (req, res) => {
+  try {
+    const user = req.userId;
+    const orderId = req.params.id;
+
+    const foundOrder = await SubOrder.findById(orderId).exec();
+
+    if (!foundOrder)
+      return res.status(404).json({ message: "This order is not exist" });
+
+    if (foundOrder.user.toString() !== user) {
+      return res
+        .status(403)
+        .json({ message: "You have not authorize to perform this action" });
+    }
+
+    const currentStatusIndex = ORDERSTATUS_LIST.indexOf(foundOrder.subStatus);
+    const pendingIndex = ORDERSTATUS_LIST.indexOf("pending");
+    const cancelledIndex = ORDERSTATUS_LIST.indexOf("cancelled");
+
+    if (currentStatusIndex > pendingIndex) {
+      return res
+        .status(400)
+        .json({ message: "This order has been handed over to the carrier" });
+    }
+
+    foundOrder.subStatus = ORDERSTATUS_LIST[cancelledIndex];
+
+    const result = await foundOrder.save();
+
+    res.status(200).json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Get orders failed", error: err.message });
+  }
+};
+
 module.exports = {
   createOrder,
   getAllParentOrder,
   getSubOrder,
   updateOrderStatusForShop,
   updateOrderStatusForUser,
+  shopCancelOrder,
+  userCancelOrder,
 };
