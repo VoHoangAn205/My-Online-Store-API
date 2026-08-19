@@ -41,7 +41,8 @@ const sendBackgroundOrderEmail = (
   username,
   clientEmail,
   totalPrice,
-  subOrders,
+  OrderItem,
+  vendorData,
 ) => {
   const emailPromises = [];
 
@@ -74,7 +75,7 @@ const sendBackgroundOrderEmail = (
                         </tr>
                     </thead>
                     <tbody>
-                        ${renderHtmlEmailItem(subOrders)}
+                        ${renderHtmlEmailItem(OrderItem)}
                         <!-- Totals -->
                         <tr>
                             <td colspan="2" style="padding: 12px 0 4px 0; color: #7a869a; text-align: right;">Subtotal:</td>
@@ -119,10 +120,10 @@ const sendBackgroundOrderEmail = (
     }),
   );
 
-  subOrders.forEach((subOrder) => {
+  vendorData.forEach((data) => {
     emailPromises.push(
       sendEmail({
-        to: subOrder.historicalShopSnapshot.email,
+        to: data.shopEmail,
         subject: "Your store has received a new order",
         html: `<div class="email-container" style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); border: 1px solid #e1e4e8;">
         
@@ -142,8 +143,7 @@ const sendBackgroundOrderEmail = (
                 <tr>
                     <td style="width: 50%; padding: 10px 10px 10px 0; vertical-align: top;">
                         <strong style="color: #7a869a; text-transform: uppercase; font-size: 12px; display: block; margin-bottom: 5px;">Customer Details</strong>
-                        <span style="color: #333333; font-weight: 500;">${subOrder.historicalShopSnapshot.username}</span><br>
-                        <a href="mailto:jane.doe@example.com" style="color: #0052cc; text-decoration: none;">${subOrder.historicalShopSnapshot.email}</a><br>
+                        <span style="color: #333333; font-weight: 500;">${data.shopName}</span>
                         555-0199
                     </td>
                     <td style="width: 50%; padding: 10px 0 10px 10px; vertical-align: top; border-left: 1px solid #e1e4e8;">
@@ -166,7 +166,7 @@ const sendBackgroundOrderEmail = (
                     </tr>
                 </thead>
                 <tbody>
-                    ${renderHtmlForShop(subOrder.orderItems)}
+                    ${renderHtmlForShop(data.orderItems)}
                 </tbody>
             </table>
 

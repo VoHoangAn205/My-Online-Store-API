@@ -35,6 +35,8 @@ const createOrder = async (req, res) => {
     // create parent order
     const parentOrder = await Order.create({ user });
 
+    const vendorEmailData = {};
+
     for (const item of cartItems) {
       const product = foundProducts.find(
         (product) => product._id.toString() === item.productId,
@@ -57,12 +59,15 @@ const createOrder = async (req, res) => {
           shopId,
           user,
           parentOrder,
-          historicalShopSnapshot: {
-            username: shopName,
-            email: shopEmail,
-          },
           subTotalPrice: 0,
           orderItems: [],
+        };
+
+        vendorEmailData[shopId] = {
+          shopEmail,
+          shopName,
+          orderItems: [],
+          subTotalPrice: 0,
         };
       }
 
@@ -73,9 +78,17 @@ const createOrder = async (req, res) => {
         price: product.price,
         quantity: item.quantity,
       });
+
+      vendorEmailData[shopId].subTotalPrice += totalItem;
+      vendorEmailData[shopId].orderItems.push({
+        name: product.name,
+        price: product.price,
+        quantity: item.quantity,
+      });
     }
 
     const finalOrderItem = Object.values(groupProduct);
+    const vendorData = Object.values(vendorEmailData);
     // create subOrder
     const subOrder = await SubOrder.create(finalOrderItem);
 
@@ -95,6 +108,7 @@ const createOrder = async (req, res) => {
       findUser.email,
       totalPrice,
       finalOrderItem,
+      vendorData,
     );
     res.status(200).json(subOrder);
   } catch (err) {
@@ -109,7 +123,15 @@ const getAllParentOrder = async (req, res) => {
   try {
     const user = req.userId;
 
-    const result = await Order.find({ user }).populate("subOrders").exec();
+    const result = await Order.find({ user })
+      .populate({
+        path: "subOrders",
+        populate: {
+          path: "shopId user",
+          select: "username",
+        },
+      })
+      .exec();
 
     if (!result) {
       return res.status(200).json([]);
@@ -138,7 +160,7 @@ const getSubOrder = async (req, res) => {
       .limit(limit)
       .skip(skip)
       .sort(configSort)
-      .populate("user", "username email")
+      .populate("user shopId", "username")
       .exec();
 
     const totalProducts = await SubOrder.countDocuments(filter);
@@ -236,9 +258,10 @@ const shopCancelOrder = async (req, res) => {
 
     const foundOrder = await SubOrder.findById(orderId).exec();
 
-    if (!foundOrder)
+    if (!foundOrder) {
       return res.status(404).json({ message: "This order is not exist" });
-    console.log(foundOrder.user.toString(), "    ", shopId);
+    }
+
     if (foundOrder.shopId.toString() !== shopId) {
       return res
         .status(403)
@@ -250,11 +273,9 @@ const shopCancelOrder = async (req, res) => {
     const cancelledIndex = ORDERSTATUS_LIST.indexOf("cancelled");
 
     if (currentStatusIndex >= shippedIndex) {
-      return res
-        .status(400)
-        .json({
-          message: "Cannot update status of shipped or cancelled order",
-        });
+      return res.status(400).json({
+        message: "Cannot update status of shipped or cancelled order",
+      });
     }
 
     foundOrder.subStatus = ORDERSTATUS_LIST[cancelledIndex];

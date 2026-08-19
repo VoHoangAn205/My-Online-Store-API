@@ -31,10 +31,6 @@ const subOrderSchema = new Schema(
       ref: "Order",
       required: true,
     },
-    historicalShopSnapshot: {
-      username: { type: String, required: true },
-      email: { type: String, required: true },
-    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
