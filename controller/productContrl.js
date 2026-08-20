@@ -261,12 +261,12 @@ const deleteProductContrl = async (req, res) => {
     const foundProduct = await Product.findById(id).exec();
 
     if (!foundProduct) {
-      return res.status(404).json({ message: "this product is not exist" });
+      return res.status(404).json({ message: "This product is not exist" });
     }
 
     const result = await Product.deleteOne(foundProduct).exec();
 
-    res.status(200).json({ message: "product deleted successful" });
+    res.status(200).json({ message: "Product deleted successful" });
   } catch (err) {
     console.error(err.message);
     res

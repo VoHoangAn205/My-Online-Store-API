@@ -1,41 +1,63 @@
 const Category = require("../models/Category");
 
 const getAllCategory = async (req, res) => {
-  const data = await Category.find().select("name  emoji").exec();
-  if (!data) return res.sendStatus(404);
-  return res.status(200).json({ data });
+  try {
+    const data = await Category.find().select("name  emoji").exec();
+
+    if (!data) return res.status(200).json([]);
+
+    res.status(200).json(data);
+  } catch (err) {
+    console.error("Error fetching categories: ", err.message);
+    res.status(500).json({
+      message: "Server Error fetching categories",
+      error: err.message,
+    });
+  }
 };
 
 const createCategory = async (req, res) => {
-  const { name } = req.body;
-  const userId = req.userId;
-
-  const duplicate = await Category.findOne({ name: { $eq: name } }).exec();
-
-  if (duplicate) {
-    return res.status(409).json({ message: "this category are existed" });
-  }
-
   try {
-    const result = await Category.create({ name, user: userId });
-    return res.status(201).json({ message: "your category created", result });
+    const { name, emoji } = req.body;
+    const userId = req.userId;
+
+    const duplicate = await Category.findOne({ name: { $eq: name } }).exec();
+
+    if (duplicate) {
+      return res.status(409).json({ message: "this category are existed" });
+    }
+
+    const result = await Category.create({ name, emoji, user: userId });
+    res.status(201).json(result);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "cannot create category" });
+    console.error("Create category failed: ", err.message);
+    res.status(500).json({
+      message: "Server cannot create category",
+      error: err.message,
+    });
   }
 };
 
 const deleteCategory = async (req, res) => {
-  const { id } = req.body;
+  try {
+    const id = req.params.id;
 
-  const foundCategory = await Category.findById(id);
+    const result = await Category.findByIdAndDelete(id);
 
-  if (!foundCategory) {
-    return res.status(404).json({ message: "cannot found category" });
+    if (!result) {
+      return res
+        .status(404)
+        .json({ message: "Cannot found and delete this category" });
+    }
+
+    res.sendStatus(200);
+  } catch (err) {
+    console.error("Delete category failed: ", err.message);
+    res.status(500).json({
+      message: "Server cannot delete category",
+      error: err.message,
+    });
   }
-
-  const result = await Category.deleteOne({ _id: id });
-  return res.sendStatus(200);
 };
 
 module.exports = {
