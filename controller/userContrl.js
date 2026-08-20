@@ -7,7 +7,7 @@ const getUserInfo = async (req, res) => {
     const user = req.userId;
 
     const result = await User.findById(user)
-      .select("username email roles")
+      .select("username email roles isPendingVendor")
       .exec();
 
     if (!result) {
