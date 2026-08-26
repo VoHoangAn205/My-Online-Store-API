@@ -22,7 +22,6 @@ router
   .delete(
     verifyJWT,
     verifyRole(ROLES_LIST.Admin),
-    validateBody(categoryValidate.deleteCategory),
     categoryContrl.deleteCategory,
   );
 
