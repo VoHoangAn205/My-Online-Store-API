@@ -1,11 +1,14 @@
 const jwt = require("jsonwebtoken");
 const { randomBytes } = require("crypto");
 const redis = require("../config/redisConfig");
+const clientWarningEmail = require("../helper/clientWarningEmail");
+const { sendEmail } = require("../helper/sendEmail");
 
-export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
-export const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
-export const ACCESS_TOKEN_EXPIRY = "15m";
-export const REFRESH_TOKEN_EXPIRY = 7 * 24 * 60 * 60;
+const MAX_ALLOWED_ATTEMPTS = 5;
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+const ACCESS_TOKEN_EXPIRY = "15m";
+const REFRESH_TOKEN_EXPIRY = 7 * 24 * 60 * 60;
 
 const generateToken = (payload) => {
   const now = Math.floor(Date.now() / 1000);
@@ -75,10 +78,58 @@ const revokeAllUserSessions = async (userId) => {
   }
 };
 
+const recordFailedLogin = async ({ ip, email }) => {
+  const lockWindowSeconds = 900;
+  const key = `failed_logins:${ip}:${email}`;
+
+  const count = await redis.incr(key);
+
+  if (count) {
+    await redis.expire(key, lockWindowSeconds);
+  }
+  return count;
+};
+
+const getFailedLoginCount = async ({ ip, email }) => {
+  const key = `failed_logins:${ip}:${email}`;
+
+  const count = await redis.get(key);
+
+  return count ? parseInt(count, 10) : 0;
+};
+
+const resetFailedLogins = async ({ ip, email }) => {
+  const key = `failed_logins:${ip}:${email}`;
+
+  await redis.del(key);
+};
+
+const handleFailedAttempt = async ({ ip, email, sendWarning }) => {
+  const count = await recordFailedLogin({ ip, email });
+
+  if (count >= MAX_ALLOWED_ATTEMPTS && sendWarning) {
+    await sendEmail({
+      to: email,
+      subject: "Security Warning From HoangAnWebsite",
+      html: clientWarningEmail(),
+    });
+  }
+  return count;
+};
+
 module.exports = {
+  ACCESS_TOKEN_SECRET,
+  REFRESH_TOKEN_SECRET,
+  ACCESS_TOKEN_EXPIRY,
+  REFRESH_TOKEN_EXPIRY,
+  MAX_ALLOWED_ATTEMPTS,
   generateToken,
   storeRefreshToken,
   getRefreshToken,
   deleteRefreshToken,
   revokeAllUserSessions,
+  recordFailedLogin,
+  getFailedLoginCount,
+  resetFailedLogins,
+  handleFailedAttempt,
 };
