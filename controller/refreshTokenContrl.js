@@ -1,5 +1,14 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const {
+  REFRESH_TOKEN_SECRET,
+  getRefreshToken,
+  revokeAllUserSessions,
+  deleteRefreshToken,
+  generateToken,
+  storeRefreshToken,
+  REFRESH_TOKEN_EXPIRY,
+} = require("../utils/tokenService");
 
 const handleRefreshToken = async (req, res) => {
   const cookies = req.cookies;
@@ -11,31 +20,69 @@ const handleRefreshToken = async (req, res) => {
 
   const refreshToken = cookies.jwt;
 
-  const foundUser = await User.findOne({ refreshToken }).exec();
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    sameSite: "None",
+    secure: true,
+  });
+  try {
+    const decoded = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
+    const userId = decoded.userInfo.id;
+    const jti = decoded.jti;
 
-  if (!foundUser)
-    return res.status(403).json({ message: "your token is not valid" });
+    const tokenStatus = await getRefreshToken({ userId, jti });
 
-  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
-    if (err || foundUser.username !== decoded.username) {
-      return res.sendStatus(403);
+    if (!tokenStatus || tokenStatus !== "active") {
+      console.warn(`[SECURITY ALERT] Token reuse detected for User: ${userId}`);
+
+      await revokeAllUserSessions(userId);
+
+      return res.status(403).json({
+        message:
+          "Security breach detected. All active sessions revoked. Please log in again",
+      });
+    }
+
+    await deleteRefreshToken({ userId, jti });
+
+    const foundUser = await User.findById(userId).exec();
+    if (!foundUser) {
+      return res.status(401).json({ message: "User no longer exists" });
     }
 
     const roles = Object.values(foundUser.roles);
 
-    const accessToken = jwt.sign(
-      {
-        userInfo: {
-          username: decoded.username,
-          id: foundUser._id,
-          roles,
-        },
+    const newTokens = generateToken({
+      userInfo: {
+        username: foundUser.username,
+        id: foundUser._id,
+        roles,
       },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "10m" },
-    );
-    res.json({ accessToken });
-  });
+    });
+
+    const newDecoded = jwt.decode(newTokens.refreshToken);
+
+    await storeRefreshToken({
+      userId: foundUser._id,
+      jti: newDecoded.jti,
+      ttlSecond: REFRESH_TOKEN_EXPIRY,
+    });
+
+    res.cookie("jwt", newTokens.refreshToken, {
+      httpOnly: true,
+      sameSite: "None",
+      secure: true,
+      maxAge: REFRESH_TOKEN_EXPIRY * 1000,
+    });
+
+    res.status(200).json({ accessToken: newTokens.accessToken });
+  } catch (err) {
+    if (err.name === "TokenExpiredError" || err.name === "JsonWebTokenError") {
+      return res.status(401).json({ message: "Invalid or expired token" });
+    }
+    console.error(err.message);
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
 module.exports = { handleRefreshToken };

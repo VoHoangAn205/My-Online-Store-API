@@ -50,7 +50,7 @@ const handleLogin = async (req, res) => {
       await storeRefreshToken({
         userId: foundUser._id,
         jti: decodeRefresh.jti,
-        ttlSeconds: REFRESH_TOKEN_EXPIRY,
+        ttlSecond: REFRESH_TOKEN_EXPIRY,
       });
 
       await resetFailedLogins({ ip, email });
