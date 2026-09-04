@@ -48,9 +48,11 @@ const storeRefreshToken = async ({ userId, jti, ttlSecond }) => {
   const userSessionsKey = `user_sessions:${userId}`;
   const tokenKey = `refresh_token:${userId}:${jti}`;
 
-  await redis.setex(tokenKey, ttlSecond, "active");
-
-  await redis.sadd(userSessionsKey, jti);
+  await redis
+    .pipeline()
+    .setex(tokenKey, ttlSecond, "active")
+    .sadd(userSessionsKey, jti)
+    .exec();
 };
 
 const getRefreshToken = async ({ userId, jti }) => {

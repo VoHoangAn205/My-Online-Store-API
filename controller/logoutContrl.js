@@ -1,33 +1,50 @@
 const User = require("../models/User");
+const jwt = require("jsonwebtoken");
+const {
+  deleteRefreshToken,
+  REFRESH_TOKEN_SECRET,
+  revokeAllUserSessions,
+} = require("../utils/tokenService");
 
 const handleLogout = async (req, res) => {
-  try {
-    const cookies = req.cookies;
-    if (!cookies?.jwt) return res.sendStatus(204);
+  const cookies = req.cookies;
+  if (!cookies?.jwt) return res.sendStatus(204);
 
-    const refreshToken = cookies.jwt;
+  const refreshToken = cookies.jwt;
 
-    const foundUser = await User.findOne({ refreshToken }).exec();
-
-    const cookieOption = {
+  const clearJwtCookie = () => {
+    res.clearCookie("jwt", {
       secure: true,
-      httpOnly: true,
       sameSite: "None",
-    };
+      httpOnly: true,
+    });
+  };
 
-    if (!foundUser) {
-      res.clearCookie("jwt", cookieOption);
-      return res.sendStatus(204);
+  try {
+    const decoded = await jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, {
+      ignoreExpiration: true,
+    });
+
+    const userId = decoded?.userInfo?.id;
+    const jti = decoded?.jti;
+
+    const logoutAllDevice = req.query.all === "true" || req.body.all === true;
+
+    if (userId) {
+      if (logoutAllDevice) {
+        await revokeAllUserSessions(userId);
+      } else if (jti) {
+        await deleteRefreshToken({ userId, jti });
+      }
     }
 
-    foundUser.refreshToken = "";
-    await foundUser.save();
+    clearJwtCookie();
 
-    res.clearCookie("jwt", cookieOption);
-    return res.sendStatus(204);
+    return res.sendStatus(200);
   } catch (err) {
+    clearJwtCookie();
     console.error(err.message);
-    res.status(500).json({ message: "Logout failed: ", message: err.message });
+    return res.status(500).json({ message: "Server Error" });
   }
 };
 
