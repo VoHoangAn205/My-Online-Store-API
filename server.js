@@ -16,6 +16,8 @@ const credentials = require("./middleware/credentials");
 // connect to MongoDB
 connectDB();
 
+app.set("trust proxy", 1);
+
 // midleware for logging
 app.use(logger);
 

@@ -8,7 +8,7 @@ const MAX_ALLOWED_ATTEMPTS = 5;
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 const ACCESS_TOKEN_EXPIRY = "15m";
-const REFRESH_TOKEN_EXPIRY = 7 * 24 * 60 * 60;
+const REFRESH_TOKEN_EXPIRY = 24 * 60 * 60;
 
 const generateToken = (payload) => {
   const now = Math.floor(Date.now() / 1000);
