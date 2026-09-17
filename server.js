@@ -12,6 +12,31 @@ const connectDB = require("./config/dbConn");
 const { default: mongoose } = require("mongoose");
 const verifyJWT = require("./middleware/verifyJWT");
 const credentials = require("./middleware/credentials");
+const createRateLimiter = require("./middleware/createRateLimiter");
+const productRoute = require("./routes/api/product");
+const registerRoute = require("./routes/register");
+const OtpRoute = require("./routes/otp");
+const refreshRoute = require("./routes/refresh");
+const logoutRoute = require("./routes/logout");
+const categoryRoute = require("./routes/api/category");
+const authRoute = require("./routes/auth");
+const userRoute = require("./routes/api/user");
+const cartRoute = require("./routes/api/cart");
+const orderRoute = require("./routes/api/order");
+const uploadRoute = require("./routes/api/upload");
+const galleryRoute = require("./routes/api/gallery");
+
+const globalApiLimiter = createRateLimiter({
+  windowSeconds: 15 * 60,
+  maxRequests: 100,
+  keyPrefix: "global",
+});
+
+const authApiLimiter = createRateLimiter({
+  windowSeconds: 15 * 60,
+  maxRequests: 15,
+  keyPrefix: "auth_strict",
+});
 
 // connect to MongoDB
 connectDB();
@@ -36,19 +61,19 @@ app.use(express.json());
 
 app.use("/", require("./routes/root"));
 
-app.use("/register", require("./routes/register"));
-app.use("/requestOtp", require("./routes/otp"));
-app.use("/auth", require("./routes/auth"));
-app.use("/refresh", require("./routes/refresh"));
-app.use("/logout", require("./routes/logout"));
-app.use("/category", require("./routes/api/category"));
-app.use("/product", require("./routes/api/product"));
+app.use("/register", authApiLimiter, registerRoute);
+app.use("/requestOtp", authApiLimiter, OtpRoute);
+app.use("/auth", authRoute);
+app.use("/refresh", authApiLimiter, refreshRoute);
+app.use("/logout", authApiLimiter, logoutRoute);
+app.use("/category", globalApiLimiter, categoryRoute);
+app.use("/product", globalApiLimiter, productRoute);
 app.use(verifyJWT);
-app.use("/user", require("./routes/api/user"));
-app.use("/cart", require("./routes/api/cart"));
-app.use("/order", require("./routes/api/order"));
-app.use("/upload", require("./routes/api/upload"));
-app.use("/gallery", require("./routes/api/gallery"));
+app.use("/user", authApiLimiter, userRoute);
+app.use("/cart", globalApiLimiter, cartRoute);
+app.use("/order", globalApiLimiter, orderRoute);
+app.use("/upload", globalApiLimiter, uploadRoute);
+app.use("/gallery", globalApiLimiter, galleryRoute);
 
 app.all(/.*/, (req, res) => {
   res.status(404);

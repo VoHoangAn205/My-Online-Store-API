@@ -12,7 +12,7 @@ const createRateLimiter = ({ windowSeconds, maxRequests, keyPrefix }) => {
         await redis.expire(key, windowSeconds);
       }
 
-      const ttl = await redis.tll(key);
+      const ttl = await redis.ttl(key);
       res.setHeader("X-RateLimit-Limit", maxRequests);
       res.setHeader(
         "X-RateLimit-Remaining",
@@ -33,3 +33,5 @@ const createRateLimiter = ({ windowSeconds, maxRequests, keyPrefix }) => {
     }
   };
 };
+
+module.exports = createRateLimiter;

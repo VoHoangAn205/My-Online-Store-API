@@ -28,7 +28,7 @@ const handleLogout = async (req, res) => {
     const userId = decoded?.userInfo?.id;
     const jti = decoded?.jti;
 
-    const logoutAllDevice = req.query.all === "true" || req.body.all === true;
+    const logoutAllDevice = req.query?.all === "true" || req.body?.all === true;
 
     if (userId) {
       if (logoutAllDevice) {
