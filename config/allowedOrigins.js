@@ -1,3 +1,3 @@
-const allowedOrigins = ["http://localhost:3500", "http://localhost:5173"];
+const allowedOrigins = ["https://hoangan-online-store-918.vercel.app"];
 
 module.exports = allowedOrigins;
