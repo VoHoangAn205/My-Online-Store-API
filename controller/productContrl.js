@@ -232,46 +232,56 @@ const createProductContrl = async (req, res) => {
 
 const updateProductContrl = async (req, res) => {
   try {
+    const userId = req.userId;
     const id = req.params.id;
     const body = req.body;
 
-    const foundProduct = await Product.findById(id).exec();
+    const result = await Product.findOneAndUpdate(
+      { _id: id, user: userId },
+      { $set: body },
+      {
+        returnDocument: "after",
+        runValidators: true,
+      },
+    );
 
-    if (!foundProduct)
-      return res.status(404).json({ message: "This product is not exist" });
+    if (!result) {
+      const isExist = await Product.exists({ _id: id });
+      if (!isExist) {
+        return res.status(404).json({ message: "This product is not exist" });
+      }
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to perform this action." });
+    }
 
-    const result = await Product.findByIdAndUpdate(id, body, {
-      returnDocument: "after",
-      runValidators: true,
-    }).exec();
-
-    res.status(200).json({ message: "Update successful", data: result });
+    res.status(200).json(result);
   } catch (err) {
     console.error("Cannot update product: ", err.message);
-    res
-      .status(500)
-      .json({ message: "Cannot update product", error: err.message });
+    res.status(500).json({ message: "Server error: ", error: err.message });
   }
 };
 
 const deleteProductContrl = async (req, res) => {
+  const id = req.params.id;
+  const userId = req.userId;
   try {
-    const id = req.params.id;
+    const result = await Product.findOneAndDelete({ _id: id, user: userId });
 
-    const foundProduct = await Product.findById(id).exec();
-
-    if (!foundProduct) {
-      return res.status(404).json({ message: "This product is not exist" });
+    if (!result) {
+      const isExist = await Product.exists({ _id: id });
+      if (!isExist) {
+        return res.status(404).json({ message: "This product is not exist" });
+      }
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to perform this action." });
     }
 
-    const result = await Product.deleteOne(foundProduct).exec();
-
-    res.status(200).json({ message: "Product deleted successful" });
+    res.status(200).json(result);
   } catch (err) {
     console.error(err.message);
-    res
-      .status(500)
-      .json({ message: "Cannot delete product", error: err.message });
+    res.status(500).json({ message: "Server error: ", error: err.message });
   }
 };
 
