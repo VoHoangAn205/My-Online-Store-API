@@ -2,8 +2,17 @@
 
 A production-grade RESTful API featuring dual-token JWT authentication, Redis-backed token revocation, Multer image handling with Cloudinary, and strict API-as-the-source-of-truth architecture.
 
-> **Frontend Repository:** [Link to frontend](https://github.com/VoHoangAn205/My-Store-Website_Frontend)  
+> **Frontend Repository:** [Link to frontend repo](https://github.com/VoHoangAn205/My-Store-Website_Frontend)  
+> **Live Website:** [Link to my website](https://hoangan-online-store-918.vercel.app)   
 > **Live API URL:** `https://hoangan-online-store.onrender.com`
+
+## 🏗 System Architecture
+
+<p align="center">
+  <img src="./assets/architecture.jpg" alt="Express Backend Architecture Diagram" width="100%" />
+</p>
+
+---
 
 ## 🔐 Key Features & Technical Highlights
 * **Dual-Token Authentication Strategy:** Uses short-lived Access Tokens stored in memory and HTTP-Only Refresh Tokens in cookies for high security against XSS.
@@ -20,7 +29,16 @@ A production-grade RESTful API featuring dual-token JWT authentication, Redis-ba
 * **In-Memory Stored:** Redis
 * **File Processing:** Multer & Cloudinary
 * **Hosting:** Render Web Service
+
 ---
+
+### 🖼️ API-First File Processing Pipeline
+* **Centralized Backend Validation:** Express acts as the single source of truth for media management, enforcing authentication and request validation before handling uploads.
+* **Server-Side Cloudinary Integration:** Integrated Multer middleware with Cloudinary storage to process raw multi-part image uploads directly in the Express pipeline before updating MongoDB documents.
+* **Unified API Responses:** Returns normalized image metadata and Cloudinary CDN URLs back to the React client, keeping backend database schemas decoupled from frontend presentation logic.
+
+--- 
+
 ## ⚙️ Environment Variables
 
 Create a `.env` file in the root directory:
