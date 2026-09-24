@@ -1,4 +1,6 @@
 const Product = require("../models/Product");
+const { Gallery } = require("../models/Upload");
+const cloudinary = require("cloudinary").v2;
 const getSortCriteria = require("../utils/getSortCriteria");
 const notFoundData = {
   count: 0,
@@ -266,19 +268,32 @@ const deleteProductContrl = async (req, res) => {
   const id = req.params.id;
   const userId = req.userId;
   try {
-    const result = await Product.findOneAndDelete({ _id: id, user: userId });
+    const foundProduct = await Product.findById(id);
 
-    if (!result) {
-      const isExist = await Product.exists({ _id: id });
-      if (!isExist) {
-        return res.status(404).json({ message: "This product is not exist" });
-      }
+    if (!foundProduct) {
+      return res.status(404).json({ message: "This product is not exist" });
+    }
+
+    if (foundProduct.user.toString() !== userId) {
       return res
         .status(403)
         .json({ message: "You are not authorized to perform this action." });
     }
 
-    res.status(200).json(result);
+    const foundGallery = await Gallery.findById(
+      foundProduct.gallery.toString(),
+    );
+    if (foundGallery) {
+      const publicIds = foundGallery.images.map((image) => image.public_id);
+      if (publicIds.length) {
+        await cloudinary.api.delete_resources(publicIds);
+      }
+      await foundGallery.deleteOne();
+    }
+
+    await foundProduct.deleteOne();
+
+    res.status(200).json(foundProduct);
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ message: "Server error: ", error: err.message });

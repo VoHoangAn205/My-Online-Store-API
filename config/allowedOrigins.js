@@ -1,3 +1,3 @@
-const allowedOrigins = ["https://hoangan-online-store-918.vercel.app"];
+const allowedOrigins = [process.env.CLIENT_URL];
 
 module.exports = allowedOrigins;

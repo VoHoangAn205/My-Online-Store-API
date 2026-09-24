@@ -1,0 +1,930 @@
+{
+  "info": {
+    "_postman_id": "0797cc14-7efb-4914-b0e6-225c52dda3a3",
+    "name": "My Collection",
+    "description": "### Welcome to Postman! This is your first collection. \n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests\n• Test your API in real-world scenarios\n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "56530091",
+    "_collection_link": "https://go.postman.co/collection/56530091-0797cc14-7efb-4914-b0e6-225c52dda3a3?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Product",
+      "item": [
+        {
+          "name": "Create Product",
+          "request": {
+            "auth": {
+              "type": "bearer"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "string",
+                  "description": "\n"
+                },
+                {
+                  "key": "category",
+                  "value": "arrayId"
+                },
+                {
+                  "key": "gallery",
+                  "value": "arrayId"
+                },
+                {
+                  "key": "description",
+                  "value": "string"
+                },
+                {
+                  "key": "price",
+                  "value": "number"
+                },
+                {
+                  "key": "status",
+                  "value": "string"
+                },
+                {
+                  "key": "stock",
+                  "value": "number"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{Base_URL}}/product",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "product"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User's Products",
+          "request": {
+            "auth": {
+              "type": "bearer"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/product/myOwnProducts?limit&page",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "product",
+                "myOwnProducts"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": ""
+                },
+                {
+                  "key": "page",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/product/search?query=laptop&limit=5&page=1",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "product",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "query",
+                  "value": "laptop"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/product?limit=3&page=2",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "product"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "3"
+                },
+                {
+                  "key": "page",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Shop Products",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/product/shop/69e0fe7e0691215d56b844a8",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "product",
+                "shop",
+                "69e0fe7e0691215d56b844a8"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "7",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "2",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Detail",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/product/6a4e04b3b70d1e84bfec7439",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "product",
+                "6a4e04b3b70d1e84bfec7439"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get By Category",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/product/category/6a88057a1c84a5c45028fd55",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "product",
+                "category",
+                "6a88057a1c84a5c45028fd55"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "2",
+                  "disabled": true
+                },
+                {
+                  "key": "sort",
+                  "value": "priceAsc",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/product/6aad3d522ca08498cdd1bfb1",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "product",
+                "6aad3d522ca08498cdd1bfb1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Add New Cart",
+          "request": {
+            "auth": {
+              "type": "bearer"
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "product",
+                  "value": "6a058c8b7220544afa08b2d9"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{Base_URL}}/cart",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "cart"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Cart",
+          "request": {
+            "auth": {
+              "type": "bearer"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/cart",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "cart"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Cart",
+          "request": {
+            "auth": {
+              "type": "bearer"
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/cart/69ef1ce422325a5fbb807a59",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "cart",
+                "69ef1ce422325a5fbb807a59"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "login",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": ""
+                },
+                {
+                  "key": "password",
+                  "value": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{Base_URL}}/auth",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "auth"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "refresh",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/refresh",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "refresh"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/logout",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Category",
+      "item": [
+        {
+          "name": "Get All Category",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/category",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "category"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "Technology"
+                },
+                {
+                  "key": "emoji",
+                  "value": "⚙"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{Base_URL}}/category",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "category"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/category/6a86ce791e34eed4f7f34478",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "category",
+                "6a86ce791e34eed4f7f34478"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Order",
+      "item": [
+        {
+          "name": "Create Order",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"cartItems\": [\r\n        {\r\n        \"productId\": \"6ab009e1f7ca8b38974f2abe\",\r\n        \"quantity\": 1\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{Base_URL}}/order",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "order"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Shop Order",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/order/getShopOrders?limit=10&page=1",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "order",
+                "getShopOrders"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "processing",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Shop Update Order Status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/order/shopUpdateStatus/6a7b349780d832dce275f986",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "order",
+                "shopUpdateStatus",
+                "6a7b349780d832dce275f986"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Shop Cancel Order",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/order/shopCancel/6a7b349780d832dce275f986",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "order",
+                "shopCancel",
+                "6a7b349780d832dce275f986"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Update Order Status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/order/userUpdateStatus/6a6f7ec2686a9363e88230e3",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "order",
+                "userUpdateStatus",
+                "6a6f7ec2686a9363e88230e3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Cancel Order",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/order/userCancel/6a7b349780d832dce275f986",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "order",
+                "userCancel",
+                "6a7b349780d832dce275f986"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Get Orders",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/order/getAllParents",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "order",
+                "getAllParents"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "OTP",
+      "item": [
+        {
+          "name": "Request OTP",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "hoanganvo1812@gmail.com",
+                  "type": "text",
+                  "uuid": "937e6587-1f76-4048-8b3e-e86a105ebdc0"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3500/requestOtp",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3500",
+              "path": [
+                "requestOtp"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Get User Info",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/user",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upgrade To Vendor",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{Base_URL}}/user/upgradeToVendor",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "user",
+                "upgradeToVendor"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Gallery",
+      "item": [
+        {
+          "name": "gallery",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Successful POST request\", function () {\n    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\n});\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": [
+                    ""
+                  ]
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{Base_URL}}/gallery",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "gallery"
+              ]
+            },
+            "description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "Base_URL",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "Base_url",
+      "value": "",
+      "type": "default"
+    }
+  ]
+}

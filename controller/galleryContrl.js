@@ -107,7 +107,7 @@ const deleteGallery = async (req, res) => {
     const foundGallery = await Gallery.findById(id).exec();
 
     if (!foundGallery) {
-      return res.status(404).json({ message: "This image is not exist" });
+      return res.status(404).json({ message: "This gallery is not exist" });
     }
 
     const dataMapping = foundGallery.images.map((image) => {
