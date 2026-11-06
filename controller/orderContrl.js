@@ -5,6 +5,7 @@ const Product = require("../models/Product");
 const User = require("../models/User");
 const getSortCriteria = require("../utils/getSortCriteria");
 const ORDERSTATUS_LIST = require("../config/orderStatus_list");
+const { default: toPositiveInt } = require("../helper/toPositiveInt");
 
 const createOrder = async (req, res) => {
   try {
@@ -147,8 +148,8 @@ const getAllParentOrder = async (req, res) => {
 const getSubOrder = async (req, res) => {
   try {
     const shopId = req.userId;
-    const limit = parseInt(req.query.limit) || 10;
-    const page = parseInt(req.query.page) || 1;
+    const limit = toPositiveInt(req.query.limit, 10, 20);
+    const page = toPositiveInt(req.query.page, 1);
     const status = req.query.status || "all";
     const configSort = getSortCriteria(req.query.sort);
     const skip = (page - 1) * limit;

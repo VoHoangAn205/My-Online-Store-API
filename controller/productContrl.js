@@ -1,3 +1,4 @@
+const { default: toPositiveInt } = require("../helper/toPositiveInt");
 const Product = require("../models/Product");
 const { Gallery } = require("../models/Upload");
 const cloudinary = require("cloudinary").v2;
@@ -11,14 +12,15 @@ const notFoundData = {
 
 const getAllProductsContrl = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = toPositiveInt(req.query.limit, 20, 20);
+    const page = toPositiveInt(req.query.page, 1);
     const skip = (page - 1) * limit;
+    const sortConfig = getSortCriteria(req.query.sort);
 
     const results = await Product.find()
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: -1 })
+      .sort(sortConfig)
       .populate("category", "name")
       .populate("gallery")
       .populate("user", "username")
@@ -42,9 +44,10 @@ const getAllProductsContrl = async (req, res) => {
 const searchProduct = async (req, res) => {
   try {
     const query = req.query.query;
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = toPositiveInt(req.query.limit, 20, 20);
+    const page = toPositiveInt(req.query.page, 1);
     const skip = (page - 1) * limit;
+    const sortConfig = getSortCriteria(req.query.sort);
 
     const results = await Product.find({
       $or: [
@@ -57,7 +60,7 @@ const searchProduct = async (req, res) => {
       .populate("user", "username")
       .limit(limit)
       .skip(skip)
-      .sort({ createAt: -1 })
+      .sort(sortConfig)
       .exec();
 
     if (!results) {
@@ -88,8 +91,8 @@ const searchProduct = async (req, res) => {
 const getProductByCategory = async (req, res) => {
   try {
     const categoryId = req.params.id;
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = toPositiveInt(req.query.limit, 20, 20);
+    const page = toPositiveInt(req.query.page, 1);
     const skip = (page - 1) * limit;
     const sortConfig = getSortCriteria(req.query.sort);
 
@@ -153,16 +156,17 @@ const getProductById = async (req, res) => {
 const getShopProducts = async (req, res) => {
   try {
     const shopId = req.params.shopId;
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = toPositiveInt(req.query.limit, 20, 20);
+    const page = toPositiveInt(req.query.page, 1);
     const skip = (page - 1) * limit;
+    const sortConfig = getSortCriteria(req.query.sort);
 
     const result = await Product.find({ user: shopId })
       .populate("gallery")
       .populate("category")
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: -1 })
+      .sort(sortConfig)
       .exec();
 
     if (!result) return res.status(404).json({ message: "Products not found" });
@@ -186,16 +190,17 @@ const getShopProducts = async (req, res) => {
 const getAllUserProducts = async (req, res) => {
   try {
     const userId = req.userId;
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = toPositiveInt(req.query.limit, 20, 20);
+    const page = toPositiveInt(req.query.page, 1);
     const skip = (page - 1) * limit;
+    const sortConfig = getSortCriteria(req.query.sort);
 
     const result = await Product.find({ user: userId })
       .populate("gallery")
       .populate("category")
       .skip(skip)
       .limit(limit)
-      .sort({ createAt: -1 })
+      .sort(sortConfig)
       .exec();
 
     if (!result) return res.status(404).json({ message: "Product not found" });
