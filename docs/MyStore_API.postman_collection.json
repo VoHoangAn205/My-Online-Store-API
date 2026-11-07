@@ -140,7 +140,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{Base_URL}}/product?limit=3&page=2",
+              "raw": "{{Base_URL}}/product?page=1",
               "host": [
                 "{{Base_URL}}"
               ],
@@ -150,11 +150,12 @@
               "query": [
                 {
                   "key": "limit",
-                  "value": "3"
+                  "value": "3",
+                  "disabled": true
                 },
                 {
                   "key": "page",
-                  "value": "2"
+                  "value": "1"
                 }
               ]
             }
@@ -225,7 +226,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{Base_URL}}/product/category/6a88057a1c84a5c45028fd55",
+              "raw": "{{Base_URL}}/product/category/6a88057a1c84a5c45028fd55?page=1&limit=2",
               "host": [
                 "{{Base_URL}}"
               ],
@@ -237,13 +238,11 @@
               "query": [
                 {
                   "key": "page",
-                  "value": "1",
-                  "disabled": true
+                  "value": "1"
                 },
                 {
                   "key": "limit",
-                  "value": "2",
-                  "disabled": true
+                  "value": "2"
                 },
                 {
                   "key": "sort",
@@ -439,6 +438,48 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "",
+                  "description": "user123"
+                },
+                {
+                  "key": "email",
+                  "value": "",
+                  "description": "user@gmail.com"
+                },
+                {
+                  "key": "password",
+                  "value": "",
+                  "description": "(@#123Abc)"
+                },
+                {
+                  "key": "otp",
+                  "value": "",
+                  "description": "312123 - get from otp's request"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{Base_URL}}/register",
+              "host": [
+                "{{Base_URL}}"
+              ],
+              "path": [
+                "register"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -590,7 +631,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{Base_URL}}/order/getShopOrders?limit=10&page=1",
+              "raw": "{{Base_URL}}/order/getShopOrders?status=processing&limit=10&page=1",
               "host": [
                 "{{Base_URL}}"
               ],
@@ -601,8 +642,7 @@
               "query": [
                 {
                   "key": "status",
-                  "value": "processing",
-                  "disabled": true
+                  "value": "processing"
                 },
                 {
                   "key": "limit",
@@ -776,9 +816,7 @@
               "urlencoded": [
                 {
                   "key": "email",
-                  "value": "hoanganvo1812@gmail.com",
-                  "type": "text",
-                  "uuid": "937e6587-1f76-4048-8b3e-e86a105ebdc0"
+                  "value": ""
                 }
               ]
             },

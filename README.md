@@ -2,14 +2,14 @@
 
 A production-grade RESTful API featuring dual-token JWT authentication, Redis-backed token revocation, Multer image handling with Cloudinary, and strict API-as-the-source-of-truth architecture.
 
-> **Frontend Repository:** [Link to frontend repo](https://github.com/VoHoangAn205/My-Store-Website_Frontend)  
-> **Live Website:** [Link to my website](https://hoangan-online-store-918.vercel.app)  
+> **Frontend Repository:** [Link to frontend repo](https://github.com/VoHoangAn205/My-Store-Next_Frontend)  
+> **Live Website:** [Link to my website](https://hoangan-online-store-v2.vercel.app)  
 > **Live API URL:** `https://hoangan-online-store.onrender.com`
 
 ## 🏗 System Architecture
 
 <p align="center">
-  <img src="./assets/architecture.jpg" alt="Express Backend Architecture Diagram" width="100%" />
+  <img src="./assets/architecture.png" alt="Express Backend Architecture Diagram" width="100%" />
 </p>
 
 ---
