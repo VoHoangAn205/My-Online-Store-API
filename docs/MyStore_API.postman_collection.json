@@ -821,12 +821,10 @@
               ]
             },
             "url": {
-              "raw": "http://localhost:3500/requestOtp",
-              "protocol": "http",
+              "raw": "{{Base_URL}}/requestOtp",
               "host": [
-                "localhost"
+                "{{Base_URL}}"
               ],
-              "port": "3500",
               "path": [
                 "requestOtp"
               ]
