@@ -55,9 +55,8 @@ const upgradeToVendor = async (req, res) => {
     const emailForm = vendorRequestEmail(foundUser);
 
     await sendEmail({
-      from: `"System Notifications" <${process.env.EMAIL_USER}>`,
-      replyTo: foundUser.email, // Allows you to click "Reply" to respond directly to the user
-      to: process.env.EMAIL_USER,
+      replyTo: foundUser.email,
+      to: process.env.ADMIN_EMAIL,
       subject: `New Vendor Upgrade Request: ${foundUser.username}`,
       html: emailForm,
     });

@@ -67,6 +67,7 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 CLIENT_URL=https://your-app.vercel.app
 //Transactional Email Settings (Resend)
+ADMIN_EMAIL=youremail@gmail.com
 RESEND_API_KEY=your_Resend_API_key
 SENDER_EMAIL=your_Store's_name_<support@yourDomain.xyz>
 ```
