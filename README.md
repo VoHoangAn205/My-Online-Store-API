@@ -30,6 +30,7 @@ A production-grade RESTful API featuring dual-token JWT authentication, Redis-ba
 - **Database:** MongoDB (Mongoose ORM)
 - **In-Memory Stored:** Redis
 - **File Processing:** Multer & Cloudinary
+- **Sending Email:** Resend API
 - **Hosting:** Render Web Service
 
 ---
@@ -65,9 +66,7 @@ CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 CLIENT_URL=https://your-app.vercel.app
-//Transactional Email Settings (Nodemailer)
-EMAIL_HOST=your_host
-EMAIL_PORT=your_port
-EMAIL_USER=your_email
-EMAIL_PASS=your_password (abcd dcba bacd cadb)
+//Transactional Email Settings (Resend)
+RESEND_API_KEY=your_Resend_API_key
+SENDER_EMAIL=your_Store's_name_<support@yourDomain.xyz>
 ```

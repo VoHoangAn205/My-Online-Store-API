@@ -1,39 +1,29 @@
-const { promises } = require("nodemailer/lib/xoauth2");
-const transporter = require("../config/emailConfig");
 const renderHtmlEmailItem = require("./renderHtmlEmailItem");
 const renderHtmlForShop = require("./renderHtmlForShop");
+const { Resend } = require("resend");
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmail = async ({ to, subject, text, html }) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: process.env.SENDER_EMAIL || "Hoang An Store <onboarding@resend.dev>",
     to: to,
     subject: subject,
     text: text,
     html: html,
   };
   try {
-    const info = await transporter.sendMail(mailOptions);
+    const { data, error } = await resend.emails.send(mailOptions);
 
-    if (info.rejected.length > 0) {
-      console.warn("warning: Some recipients were rejected: ", info.rejected);
+    if (error) {
+      console.error("Resend error:", error);
+      return { success: false, error };
     }
-    return info;
+
+    return { success: true, data };
   } catch (err) {
-    switch (err.code) {
-      case "ECONNECTION":
-      case "ETIMEDOUT":
-        console.error("Network error - retry later:", err.message);
-        break;
-      case "EAUTH":
-        console.error("Authentication failed:", err.message);
-        break;
-      case "EENVELOPE":
-        console.error("Invalid recipients:", err.rejected);
-        break;
-      default:
-        console.error("Send failed:", err.message);
-    }
-    throw err;
+    console.error("Failed to send email", err);
+    return { success: false, error: err };
   }
 };
 
